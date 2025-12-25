@@ -1,6 +1,0 @@
-foo.mutant.20.py
-foo.mutant.64.py
-foo.mutant.68.py
-foo.mutant.57.py
-foo.mutant.69.py
-foo.mutant.63.py
