@@ -1,0 +1,8 @@
+# FunC (TON) comby rules.
+
+;;:[comment] ==> DO_NOT_MUTATE
+
+#include :[rest] ==> DO_NOT_MUTATE
+
+throw_if(:[x]) ==> throw_unless(:[x])
+throw_unless(:[x]) ==> throw_if(:[x])

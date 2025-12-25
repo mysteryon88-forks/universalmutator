@@ -1,0 +1,12 @@
+# FunC (TON) rules.
+
+^\s*#include\s ==> DO_NOT_MUTATE
+
+;; ==> SKIP_MUTATING_REST
+
+throw_if ==> throw_unless
+throw_unless ==> throw_if
+
+# Some codebases use upper-cased macros.
+THROW_IF ==> THROW_UNLESS
+THROW_UNLESS ==> THROW_IF

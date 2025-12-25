@@ -1,0 +1,17 @@
+# Tact (TON) rules.
+#
+# Notes:
+# - universal.rules already provides most operator/number mutations.
+# - Here we mainly add comment skipping and a few Tact-specific flips.
+
+^\s*import\s ==> DO_NOT_MUTATE
+
+// ==> SKIP_MUTATING_REST
+/// ==> SKIP_MUTATING_REST
+/\* ==> SKIP_MUTATING_REST
+
+true ==> false
+false ==> true
+
+throwIf ==> throwUnless
+throwUnless ==> throwIf

@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 import os
 import random
-from re import T
+import re
 import sys
 import shutil
 import subprocess
@@ -24,6 +24,11 @@ import universalmutator.vyper_handler as vyper_handler
 import universalmutator.fe_handler as fe_handler
 import universalmutator.r_handler as r_handler
 import universalmutator.fortran_handler as fortran_handler
+
+# TON languages
+import universalmutator.tact_handler as tact_handler
+import universalmutator.func_handler as func_handler
+import universalmutator.tolk_handler as tolk_handler
 
 def nullHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
     return "VALID"
@@ -112,7 +117,13 @@ def main():
                  ".R": "r",
                  ".sol": "solidity",
                  ".vy": "vyper",
-                 ".fe": "fe"}
+                 ".fe": "fe",
+
+                 # TON languages
+                 ".tact": "tact",
+                 ".fc": "func",
+                 ".func": "func",
+                 ".tolk": "tolk"}
 
     print("*** UNIVERSALMUTATOR ***")
 
@@ -262,6 +273,9 @@ def main():
     if mdir[-1] != "/":
         mdir += "/"
 
+    # NEW: ensure mutant output directory exists
+    os.makedirs(mdir, exist_ok=True)
+
     ignoreFile = None
     try:
         ignorepos = args.index("--ignore")
@@ -305,7 +319,12 @@ def main():
                 "lisp": lisp_handler,
                 "solidity": solidity_handler,
                 "vyper": vyper_handler,
-                "fe": fe_handler}
+                "fe": fe_handler,
+
+                # TON languages
+                "tact": tact_handler,
+                "func": func_handler,
+                "tolk": tolk_handler}
 
     cLikeLanguages = [
         "c",
@@ -316,7 +335,11 @@ def main():
         "c++",
         "rust",
         "solidity",
-        "go"]
+        "go",
+
+        # TON languages have C-like syntax (especially Tolk)
+        "tolk"
+    ]
 
     try:
         handlers["custom"] == custom_handler
@@ -327,7 +350,7 @@ def main():
     base = (".".join((sourceFile.split(".")[:-1]))).split("/")[-1]
     ending = "." + sourceFile.split(".")[-1]
 
-    if "--only" not in args:    
+    if "--only" not in args:
         if len(args) < 3:
             try:
                 language = languages[ending]
@@ -387,11 +410,26 @@ def main():
     mutants = []
 
     if comby:
-        mutants = mutator.mutants_comby(source, ruleFiles=rules, mutateTestCode=mutateTestCode, mutateBoth=mutateBoth,
-                                ignorePatterns=ignorePatterns, ignoreStringOnly=not mutateInStrings, fuzzing=fuzz, language=ending)
+        mutants = mutator.mutants_comby(
+            source,
+            ruleFiles=rules,
+            mutateTestCode=mutateTestCode,
+            mutateBoth=mutateBoth,
+            ignorePatterns=ignorePatterns,
+            ignoreStringOnly=not mutateInStrings,
+            fuzzing=fuzz,
+            language=ending
+        )
     else:
-        mutants = mutator.mutants(source, ruleFiles=rules, mutateTestCode=mutateTestCode, mutateBoth=mutateBoth,
-                              ignorePatterns=ignorePatterns, ignoreStringOnly=not mutateInStrings, fuzzing=fuzz)
+        mutants = mutator.mutants(
+            source,
+            ruleFiles=rules,
+            mutateTestCode=mutateTestCode,
+            mutateBoth=mutateBoth,
+            ignorePatterns=ignorePatterns,
+            ignoreStringOnly=not mutateInStrings,
+            fuzzing=fuzz
+        )
     if fuzz:
         if len(mutants) == 0:
             sys.exit(255)
@@ -456,17 +494,17 @@ def main():
                         fastCheckLine(mutant, source, sourceFile, uniqueMutants, compileFile, handler, deadCodeLines, interestingLines, tmpMutantName, mutant[0])
                 if mutant[0] in deadCodeLines:
                     continue
-        
+
         if comby:
             sourceJoined = ''.join(source)
             print("PROCESSING MUTANT:",
-              "range" + str(mutant[0]) + ":", sourceJoined[mutant[0][0]:mutant[0][1]].replace("\n", "\\n"), " ==> ", mutant[1], end="...")
+                  "range" + str(mutant[0]) + ":", sourceJoined[mutant[0][0]:mutant[0][1]].replace("\n", "\\n"), " ==> ", mutant[1], end="...")
         else:
             print("PROCESSING MUTANT:",
-              str(mutant[0]) + ":", source[mutant[0] - 1][:-1], " ==> ", mutant[1][:-1], end="...")
+                  str(mutant[0]) + ":", source[mutant[0] - 1][:-1], " ==> ", mutant[1][:-1], end="...")
         if (not comby) and showRules:
             print("(FROM:", mutant[2][1], end=")...")
-        
+
         if comby:
             mCreated = mutator.makeMutantComby(sourceJoined, mutant, tmpMutantName)
         else:
@@ -475,7 +513,7 @@ def main():
             print("REDUNDANT (SOURCE COPY!)")
             redundantMutants.append(mutant)
             continue
-        
+
         if compileFile is None:
             mutantResult = handler(tmpMutantName, mutant, sourceFile, uniqueMutants)
         else:
@@ -536,11 +574,11 @@ def main():
     print(len(validMutants), "VALID MUTANTS")
     print(len(invalidMutants), "INVALID MUTANTS")
     print(len(redundantMutants), "REDUNDANT MUTANTS")
-    
+
     totalMutants = len(validMutants) + len(invalidMutants) + len(redundantMutants)
     valid_rate = 0 if totalMutants == 0 else (len(validMutants) * 100.0)/totalMutants
     print(f"Valid Percentage: {valid_rate}%")
-    
+
     (rules, ignoreRules, skipRules) = mutator.parseRules(rules, comby= comby)
 
     if printStat:
@@ -589,14 +627,14 @@ def printRulesStat(rules, validMutants, invalidMutants):
         lhs, rhs = mutant[-1]
         if (lhs,rhs) not in valid_cnt:
             valid_cnt[(lhs,rhs)] = 0
-        valid_cnt[(lhs,rhs)] += 1    
+        valid_cnt[(lhs,rhs)] += 1
 
     for mutant in invalidMutants:
         lhs, rhs = mutant[-1]
         if (lhs,rhs) not in invalid_cnt:
             invalid_cnt[(lhs,rhs)] = 0
-        invalid_cnt[(lhs,rhs)] += 1    
-    
+        invalid_cnt[(lhs,rhs)] += 1
+
     fis = open("rules_count.txt", "w")
     i = 0
     table = []
@@ -610,7 +648,7 @@ def printRulesStat(rules, validMutants, invalidMutants):
         i += 1
 
         table.append([f'{i}',f'{lhs} ==> {rhs}', f'{valid_cnt[(lhs,rhs)]}', f'{invalid_cnt[(lhs,rhs)]}'])
-    
+
     fis.write(tabulate(table,tablefmt="grid"))
     sys.stdout.flush()
     fis.close()
