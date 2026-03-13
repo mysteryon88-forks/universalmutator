@@ -26,9 +26,10 @@ from universalmutator import r_handler
 from universalmutator import fortran_handler
 
 # TON languages
-import universalmutator.tact_handler as tact_handler
-import universalmutator.func_handler as func_handler
-import universalmutator.tolk_handler as tolk_handler
+from universalmutator import tact_handler
+from universalmutator import func_handler
+from universalmutator import tolk_handler
+
 
 def nullHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
     return "VALID"
