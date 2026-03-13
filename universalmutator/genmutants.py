@@ -419,7 +419,7 @@ def main():
             language=ending
         )
     else:
-        mutants = mutator.mutants(
+        mutants = mutator.mutants_regexp(
             source,
             ruleFiles=rules,
             mutateTestCode=mutateTestCode,
