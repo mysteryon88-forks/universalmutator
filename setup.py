@@ -5,7 +5,7 @@ import sys, os
 
 setup(
     name='universalmutator',
-    version='1.1.12',
+    version='1.1.13',
     description='Universal regexp-based mutation tool',
     long_description_content_type="text/markdown",
     long_description=open('README.md').read(),
@@ -67,7 +67,6 @@ setup(
     show_mutants = universalmutator.show:main
     prune_mutants = universalmutator.prune:main
     intersect_mutants = universalmutator.intersect:main
-    mutant_server = universalmutator.server:main
     """,
     keywords='testing mutation mutation-testing',
     classifiers=[

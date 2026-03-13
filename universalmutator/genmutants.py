@@ -8,22 +8,22 @@ import sys
 import shutil
 import subprocess
 
-import universalmutator.mutator as mutator
+from universalmutator import mutator
 
-import universalmutator.c_handler as c_handler
-import universalmutator.cpp_handler as cpp_handler
-import universalmutator.python_handler as python_handler
-import universalmutator.java_handler as java_handler
-import universalmutator.javascript_handler as javascript_handler
-import universalmutator.swift_handler as swift_handler
-import universalmutator.rust_handler as rust_handler
-import universalmutator.go_handler as go_handler
-import universalmutator.lisp_handler as lisp_handler
-import universalmutator.solidity_handler as solidity_handler
-import universalmutator.vyper_handler as vyper_handler
-import universalmutator.fe_handler as fe_handler
-import universalmutator.r_handler as r_handler
-import universalmutator.fortran_handler as fortran_handler
+from universalmutator import c_handler
+from universalmutator import cpp_handler
+from universalmutator import python_handler
+from universalmutator import java_handler
+from universalmutator import javascript_handler
+from universalmutator import swift_handler
+from universalmutator import rust_handler
+from universalmutator import go_handler
+from universalmutator import lisp_handler
+from universalmutator import solidity_handler
+from universalmutator import vyper_handler
+from universalmutator import fe_handler
+from universalmutator import r_handler
+from universalmutator import fortran_handler
 
 # TON languages
 import universalmutator.tact_handler as tact_handler
@@ -52,8 +52,6 @@ def checkCombyDeadCode(deadCodeLines, mutant):
     return True
 
 def cmdHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
-    global cmd
-
     if "MUTANT" not in cmd:
         # We asssume if the MUTANT isn't part of the command,
         # we need to move it into place, before, e.g., make
@@ -66,8 +64,7 @@ def cmdHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
                                 shell=True, stderr=file, stdout=file)
         if r == 0:
             return "VALID"
-        else:
-            return "INVALID"
+        return "INVALID"
     finally:
         # If we moved the mutant in, restore original
         if "MUTANT" not in cmd:
@@ -85,6 +82,7 @@ def toGarbage(code):
             newCode += "Q"
     return newCode
 
+cmd = None
 
 def main():
     global cmd
@@ -457,7 +455,7 @@ def main():
                 if handlers[language].dumb:
                     noFastCheck = True
                     dumbHandler = True
-            except:
+            except BaseException:
                 pass
             handler = handlers[language].handler
     else:
@@ -473,7 +471,7 @@ def main():
         if (lineFile is not None) and mutant[0] not in lines:
             # skip if not a line to mutate
             continue
-        if (not noFastCheck):
+        if not noFastCheck:
             if comby:
                 checkLines = []
                 for i in range(mutant[3][0], mutant[3][1] + 1):
@@ -538,12 +536,13 @@ def main():
         print("TRYING CODE SWAPS...")
         swapList = []
         for lineNo in range(len(source)):
-            if (lineNo + 1) in deadCodeLines:
+            if lineNo + 1 in deadCodeLines:
                 continue
             swapList.append(lineNo)
         for i in range(0, len(swapList)-1):
             a = swapList[i]
             b = swapList[i+1]
+            mutant = [a + 1] # Only the line is valid here
             print("TRYING TO SWAP LINES", a + 1, "AND", b + 1, end="...")
             newSource = source[:a]
             newSource.append(source[b])
@@ -608,10 +607,15 @@ def printMutantsStat(mutants, source = None):
             sys.stdout.flush()
 
             fis.write(f"{i}.\n")
-            fis.write(mutant[2][0]); fis.write('\n')
+            fis.write(mutant[2][0])
+            fis.write('\n')
             if source is not None:
-                fis.write("source:\n"); fis.write(source[mutant[0][0]:mutant[0][1]]); fis.write('\n')
-            fis.write("mutant:\n"); fis.write(mutant[1]); fis.write('\n\n')
+                fis.write("source:\n")
+                fis.write(source[mutant[0][0]:mutant[0][1]])
+                fis.write('\n')
+            fis.write("mutant:\n")
+            fis.write(mutant[1])
+            fis.write('\n\n')
         fis.close()
 
     validMutants, invalidMutants, redundantMutants = mutants
@@ -640,7 +644,7 @@ def printRulesStat(rules, validMutants, invalidMutants):
     table = []
     table.append(["#","Rule","No. of Valids", "No. of Invalids"])
 
-    for ((lhs, rhs), ruleUsed) in rules:
+    for ((lhs, rhs), _) in rules:
         if (lhs,rhs) not in valid_cnt:
             valid_cnt[(lhs,rhs)] = 0
         if (lhs,rhs) not in invalid_cnt:
