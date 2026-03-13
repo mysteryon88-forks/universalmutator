@@ -227,43 +227,41 @@ cd examples
 python -m universalmutator.genmutants foo.fc func --cmd "ton-compiler --input MUTANT --output-fift ..\tmp\func-out.fif" --mutantDir ..\tmp\mutants_func
 ```
 
-## Changes Added After Initial Fork
+### 1) CI
 
-### 1) CI was modernized and expanded
-
-- Replaced the old split GitHub Actions workflows with a single consolidated `CI` workflow in `.github/workflows/ci.yml`
-- Added triggers for both `push` and `pull_request` on `main` and `master`
-- Added `workflow_dispatch` for manual runs
-- Added `concurrency` to cancel outdated runs on the same branch/PR
-- Updated Actions versions (`actions/setup-python@v5`, `actions/setup-node@v4`)
-- Added `pip` caching with `cache-dependency-path: setup.py`
-- Expanded testing coverage to include:
+- Заменили старые раздельные рабочие процессы GitHub Actions на единый объединенный рабочий процесс `CI` в файле `.github/workflows/ci.yml`
+- Добавили триггеры для событий `push` и `pull_request` на ветках `main` и `master`
+- Добавлен `workflow_dispatch` для ручного запуска
+- Добавлена `concurrency` для отмены устаревших запусков на одной ветке/PR
+- Обновлены версии Actions (`actions/setup-python@v5`, `actions/setup-node@v4`)
+- Добавлено кэширование `pip` с `cache-dependency-path: setup.py`
+- Расширено покрытие тестирования, включив:
   - `lint`
   - `test`
   - `package-smoke`
   - `ton-smoke`
-- Added Windows coverage in CI (`windows-latest`) because several real bugs were Windows-specific
-- Added TON smoke checks for the current TON support path
-- Updated pylint CI configuration to also disable `R0402`
+- Добавлено покрытие Windows в CI (`windows-latest`), так как несколько реальных ошибок были специфичны для Windows
+- Добавлены TON-проверки для текущего пути поддержки TON
+- Обновлена конфигурация pylint CI, чтобы также отключить `R0402`
 
 ### 2) Compiler and shell execution bugs were fixed
 
-- Fixed Windows shell invocation in `universalmutator/analyze.py`
-  - commands passed with `shell=True` are now executed as strings, not as one-element lists
-  - `MUTANT` replacement now works correctly in analysis commands
-  - backup/restore logic was improved for commands that already work directly with `MUTANT`
-- Fixed the same shell invocation bug in `universalmutator/genmutants.py`
-  - this was the reason compile-check commands like `tact MUTANT --output ...` incorrectly marked essentially all mutants as `INVALID` on Windows
-- Fixed rule parsing in `universalmutator/mutator.py`
-  - normalized CRLF handling so built-in `.rules` files work correctly on Windows
-  - this fixed parsing of TON rule files such as `tact.rules`, `func.rules`, and `tolk.rules`
-- Updated tests to invoke the current checkout via `python -m ...` instead of relying on globally installed CLI entry points from `PATH`
-- Stabilized local example-based tests so they do not depend on a previously mutated working tree state
+- Исправлено вызов оболочки Windows в файле `universalmutator/analyze.py`
+  - команды, передаваемые с параметром `shell=True`, теперь выполняются как строки, а не как списки с одним элементом
+  - Замена `MUTANT` теперь корректно работает в командах анализа
+  - Улучшена логика резервного копирования/восстановления для команд, которые уже работают напрямую с `MUTANT`
+- Исправлена та же ошибка вызова оболочки в `universalmutator/genmutants.py`
+  - это было причиной того, что команды проверки компиляции, такие как `tact MUTANT --output ...`, неверно помечали практически все мутанты как `INVALID` в Windows
+- Исправлен разбор правил в `universalmutator/mutator.py`
+  - Нормализована обработка CRLF, чтобы встроенные файлы `.rules` работали корректно в Windows
+  - это исправило разбор файлов правил TON, таких как `tact.rules`, `func.rules` и `tolk.rules`
+- Обновлены тесты, чтобы вызывать текущий чек-аут с помощью `python -m ...` вместо использования глобально установленных точек входа CLI из `PATH`
+- Стабилизированы локальные тесты на основе примеров, чтобы они не зависели от состояния рабочего дерева, измененного ранее
 
 ### Result
 
-- TON mutation generation works correctly in the current checkout
-- Tact compile-check works correctly with commands like:
+- Генерация мутаций TON работает корректно в текущей версии
+- Проверка компиляции Tact работает корректно с такими командами, как:
 
 ```sh
 cd examples
