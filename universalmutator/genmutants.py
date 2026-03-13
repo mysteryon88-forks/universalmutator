@@ -61,7 +61,7 @@ def cmdHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
         shutil.copy(tmpMutantName, sourceFile)
     try:
         with open(".um.mutant_output." + str(os.getpid()), 'w') as file:
-            r = subprocess.call([cmd.replace("MUTANT", tmpMutantName)],
+            r = subprocess.call(cmd.replace("MUTANT", tmpMutantName),
                                 shell=True, stderr=file, stdout=file)
         if r == 0:
             return "VALID"
