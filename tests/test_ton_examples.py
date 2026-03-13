@@ -9,6 +9,13 @@ from unittest import TestCase
 class TestTONExamples(TestCase):
     def setUp(self):
         os.chdir("examples")
+        repo_root = os.path.abspath("..")
+        self.subprocess_env = os.environ.copy()
+        existing_pythonpath = self.subprocess_env.get("PYTHONPATH")
+        if existing_pythonpath:
+            self.subprocess_env["PYTHONPATH"] = repo_root + os.pathsep + existing_pythonpath
+        else:
+            self.subprocess_env["PYTHONPATH"] = repo_root
 
     def tearDown(self):
         # Clean up generated mutants
@@ -51,6 +58,7 @@ class TestTONExamples(TestCase):
                 ],
                 stdout=f,
                 stderr=f,
+                env=self.subprocess_env,
             )
         self.assertEqual(r, 0)
         with open("mutate.out", "r") as f:

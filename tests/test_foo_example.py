@@ -27,6 +27,13 @@ if __name__ == '__main__':
 class TestFooExample(TestCase):
     def setUp(self):
         os.chdir("examples")
+        repo_root = os.path.abspath("..")
+        self.subprocess_env = os.environ.copy()
+        existing_pythonpath = self.subprocess_env.get("PYTHONPATH")
+        if existing_pythonpath:
+            self.subprocess_env["PYTHONPATH"] = repo_root + os.pathsep + existing_pythonpath
+        else:
+            self.subprocess_env["PYTHONPATH"] = repo_root
         with open("foo.py", "r") as f:
             self.original_foo = f.read()
         with open("foo.py", "w") as f:
@@ -39,7 +46,12 @@ class TestFooExample(TestCase):
 
     def test_foo_example(self):
         with open("mutate.out", 'w') as f:
-            r = subprocess.call([sys.executable, "-m", "universalmutator.genmutants", "foo.py"], stdout=f, stderr=f)
+            r = subprocess.call(
+                [sys.executable, "-m", "universalmutator.genmutants", "foo.py"],
+                stdout=f,
+                stderr=f,
+                env=self.subprocess_env,
+            )
         with open("mutate.out", 'r') as f:
             for line in f:
                 print(line, end=" ")
@@ -63,7 +75,10 @@ class TestFooExample(TestCase):
         with open("analyze.out", 'w') as f:
             r = subprocess.call(
                 [sys.executable, "-m", "universalmutator.analyze", "foo.py", 'python MUTANT', "--verbose", "--timeout", "5"],
-                stdout=f, stderr=f)
+                stdout=f,
+                stderr=f,
+                env=self.subprocess_env,
+            )
         with open("analyze.out", 'r') as f:
             for line in f:
                 print(line, end=" ")
@@ -93,5 +108,6 @@ class TestFooExample(TestCase):
                 [sys.executable, "-m", "universalmutator.prioritize", "notkilled.txt", "notkilled_prioritized.txt"],
                 stdout=f,
                 stderr=f,
+                env=self.subprocess_env,
             )
         self.assertEqual(r, 0)

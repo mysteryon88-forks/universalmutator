@@ -226,3 +226,52 @@ python -m universalmutator.genmutants foo.tolk tolk --cmd "npx -y @ton/tolk-js M
 cd examples
 python -m universalmutator.genmutants foo.fc func --cmd "ton-compiler --input MUTANT --output-fift ..\tmp\func-out.fif" --mutantDir ..\tmp\mutants_func
 ```
+
+## Changes Added After Initial Fork
+
+### 1) CI was modernized and expanded
+
+- Replaced the old split GitHub Actions workflows with a single consolidated `CI` workflow in `.github/workflows/ci.yml`
+- Added triggers for both `push` and `pull_request` on `main` and `master`
+- Added `workflow_dispatch` for manual runs
+- Added `concurrency` to cancel outdated runs on the same branch/PR
+- Updated Actions versions (`actions/setup-python@v5`, `actions/setup-node@v4`)
+- Added `pip` caching with `cache-dependency-path: setup.py`
+- Expanded testing coverage to include:
+  - `lint`
+  - `test`
+  - `package-smoke`
+  - `ton-smoke`
+- Added Windows coverage in CI (`windows-latest`) because several real bugs were Windows-specific
+- Added TON smoke checks for the current TON support path
+- Updated pylint CI configuration to also disable `R0402`
+
+### 2) Compiler and shell execution bugs were fixed
+
+- Fixed Windows shell invocation in `universalmutator/analyze.py`
+  - commands passed with `shell=True` are now executed as strings, not as one-element lists
+  - `MUTANT` replacement now works correctly in analysis commands
+  - backup/restore logic was improved for commands that already work directly with `MUTANT`
+- Fixed the same shell invocation bug in `universalmutator/genmutants.py`
+  - this was the reason compile-check commands like `tact MUTANT --output ...` incorrectly marked essentially all mutants as `INVALID` on Windows
+- Fixed rule parsing in `universalmutator/mutator.py`
+  - normalized CRLF handling so built-in `.rules` files work correctly on Windows
+  - this fixed parsing of TON rule files such as `tact.rules`, `func.rules`, and `tolk.rules`
+- Updated tests to invoke the current checkout via `python -m ...` instead of relying on globally installed CLI entry points from `PATH`
+- Stabilized local example-based tests so they do not depend on a previously mutated working tree state
+
+### Result
+
+- TON mutation generation works correctly in the current checkout
+- Tact compile-check works correctly with commands like:
+
+```sh
+cd examples
+python -m universalmutator.genmutants foo.tact tact --cmd "tact MUTANT --output ..\tmp\tact-out" --mutantDir ..\tmp\mutants_tact
+```
+
+- The local Python test suite passes after the fixes:
+
+```sh
+python -m pytest -q
+```
