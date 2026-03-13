@@ -578,7 +578,7 @@ def main():
     valid_rate = 0 if totalMutants == 0 else (len(validMutants) * 100.0)/totalMutants
     print(f"Valid Percentage: {valid_rate}%")
 
-    (rules, ignoreRules, skipRules) = mutator.parseRules(rules, comby= comby)
+    (rules, _, _) = mutator.parseRules(rules, comby= comby)
 
     if printStat:
         source = sourceJoined if comby else None
