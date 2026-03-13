@@ -1,0 +1,12 @@
+# Tolk (TON) rules.
+
+^\s*import\s ==> DO_NOT_MUTATE
+
+// ==> SKIP_MUTATING_REST
+/\* ==> SKIP_MUTATING_REST
+
+true ==> false
+false ==> true
+
+# Make immutables mutable (likely still compiles).
+\bval\b ==> var

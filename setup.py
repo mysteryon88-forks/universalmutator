@@ -31,6 +31,10 @@ setup(
             'static/vyper.rules',
             'static/none.rules',
             'static/fe.rules',
+            # TON languages
+            'static/tact.rules',
+            'static/func.rules',
+            'static/tolk.rules',
             'comby/universal.rules',
             'comby/c_like.rules',
             'comby/c.rules',
@@ -47,6 +51,10 @@ setup(
             'comby/solidity.rules',
             'comby/vyper.rules',
             'comby/none.rules',
+            # TON languages
+            'comby/tact.rules',
+            'comby/func.rules',
+            'comby/tolk.rules',
             ]
     },
     license='MIT',

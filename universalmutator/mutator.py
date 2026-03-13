@@ -1,6 +1,6 @@
 from __future__ import print_function
 import re
-import pkg_resources
+import pkgutil
 import random
 from comby import Comby
 import os
@@ -17,10 +17,11 @@ def parseRules(ruleFiles, comby=False):
                 rulePath = os.path.join('comby', ruleFile)
             else:
                 rulePath = os.path.join('static', ruleFile)
-            with pkg_resources.resource_stream('universalmutator', rulePath) as builtInRule:
-                for line in builtInRule:
-                    line = line.decode()
-                    rulesText.append((line, "builtin:" + ruleFile))
+            data = pkgutil.get_data('universalmutator', rulePath)
+            if data is None:
+                raise FileNotFoundError(rulePath)
+            for line in data.decode('utf-8', errors='replace').splitlines(True):
+                rulesText.append((line, "builtin:" + ruleFile))
         except BaseException:
             print("FAILED TO FIND RULE", ruleFile, "AS BUILT-IN...")
             try:

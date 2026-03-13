@@ -1,0 +1,16 @@
+;; Example FunC file for UniversalMutator smoke-tests.
+;; Intentionally small; not guaranteed to compile in every environment.
+
+(int) sum(int a, int b) {
+    ;; basic ops
+    throw_unless(33, a != 0);
+    throw_if(34, a == 0);
+    if (a < b) {
+        return a + b;
+    }
+    return a - b;
+}
+
+() main() impure {
+    ;; no-op entrypoint for compilation
+}

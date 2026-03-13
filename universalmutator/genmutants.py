@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 import os
 import random
-from re import T
+import re
 import sys
 import shutil
 import subprocess
@@ -24,6 +24,11 @@ from universalmutator import vyper_handler
 from universalmutator import fe_handler
 from universalmutator import r_handler
 from universalmutator import fortran_handler
+
+# TON languages
+import universalmutator.tact_handler as tact_handler
+import universalmutator.func_handler as func_handler
+import universalmutator.tolk_handler as tolk_handler
 
 def nullHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
     return "VALID"
@@ -110,7 +115,13 @@ def main():
                  ".R": "r",
                  ".sol": "solidity",
                  ".vy": "vyper",
-                 ".fe": "fe"}
+                 ".fe": "fe",
+
+                 # TON languages
+                 ".tact": "tact",
+                 ".fc": "func",
+                 ".func": "func",
+                 ".tolk": "tolk"}
 
     print("*** UNIVERSALMUTATOR ***")
 
@@ -260,6 +271,9 @@ def main():
     if mdir[-1] != "/":
         mdir += "/"
 
+    # NEW: ensure mutant output directory exists
+    os.makedirs(mdir, exist_ok=True)
+
     ignoreFile = None
     try:
         ignorepos = args.index("--ignore")
@@ -303,7 +317,12 @@ def main():
                 "lisp": lisp_handler,
                 "solidity": solidity_handler,
                 "vyper": vyper_handler,
-                "fe": fe_handler}
+                "fe": fe_handler,
+
+                # TON languages
+                "tact": tact_handler,
+                "func": func_handler,
+                "tolk": tolk_handler}
 
     cLikeLanguages = [
         "c",
@@ -314,7 +333,11 @@ def main():
         "c++",
         "rust",
         "solidity",
-        "go"]
+        "go",
+
+        # TON languages have C-like syntax (especially Tolk)
+        "tolk"
+    ]
 
     try:
         handlers["custom"] == custom_handler
@@ -385,11 +408,26 @@ def main():
     mutants = []
 
     if comby:
-        mutants = mutator.mutants_comby(source, ruleFiles=rules, mutateTestCode=mutateTestCode, mutateBoth=mutateBoth,
-                                ignorePatterns=ignorePatterns, ignoreStringOnly=not mutateInStrings, fuzzing=fuzz, language=ending)
+        mutants = mutator.mutants_comby(
+            source,
+            ruleFiles=rules,
+            mutateTestCode=mutateTestCode,
+            mutateBoth=mutateBoth,
+            ignorePatterns=ignorePatterns,
+            ignoreStringOnly=not mutateInStrings,
+            fuzzing=fuzz,
+            language=ending
+        )
     else:
-        mutants = mutator.mutants_regexp(source, ruleFiles=rules, mutateTestCode=mutateTestCode, mutateBoth=mutateBoth,
-                              ignorePatterns=ignorePatterns, ignoreStringOnly=not mutateInStrings, fuzzing=fuzz)
+        mutants = mutator.mutants(
+            source,
+            ruleFiles=rules,
+            mutateTestCode=mutateTestCode,
+            mutateBoth=mutateBoth,
+            ignorePatterns=ignorePatterns,
+            ignoreStringOnly=not mutateInStrings,
+            fuzzing=fuzz
+        )
     if fuzz:
         if len(mutants) == 0:
             sys.exit(255)
@@ -458,10 +496,10 @@ def main():
         if comby:
             sourceJoined = ''.join(source)
             print("PROCESSING MUTANT:",
-              "range" + str(mutant[0]) + ":", sourceJoined[mutant[0][0]:mutant[0][1]].replace("\n", "\\n"), " ==> ", mutant[1], end="...")
+                  "range" + str(mutant[0]) + ":", sourceJoined[mutant[0][0]:mutant[0][1]].replace("\n", "\\n"), " ==> ", mutant[1], end="...")
         else:
             print("PROCESSING MUTANT:",
-              str(mutant[0]) + ":", source[mutant[0] - 1][:-1], " ==> ", mutant[1][:-1], end="...")
+                  str(mutant[0]) + ":", source[mutant[0] - 1][:-1], " ==> ", mutant[1][:-1], end="...")
         if (not comby) and showRules:
             print("(FROM:", mutant[2][1], end=")...")
 
@@ -540,7 +578,7 @@ def main():
     valid_rate = 0 if totalMutants == 0 else (len(validMutants) * 100.0)/totalMutants
     print(f"Valid Percentage: {valid_rate}%")
 
-    (rules, _, _) = mutator.parseRules(rules, comby= comby)
+    (rules, ignoreRules, skipRules) = mutator.parseRules(rules, comby= comby)
 
     if printStat:
         source = sourceJoined if comby else None

@@ -1,0 +1,12 @@
+# Tact (TON) comby rules.
+
+//:[comment] ==> DO_NOT_MUTATE
+///:[comment] ==> DO_NOT_MUTATE
+
+import :[rest] ==> DO_NOT_MUTATE
+
+true ==> false
+false ==> true
+
+throwIf(:[x]) ==> throwUnless(:[x])
+throwUnless(:[x]) ==> throwIf(:[x])
