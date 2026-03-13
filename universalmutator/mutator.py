@@ -38,7 +38,9 @@ def parseRules(ruleFiles, comby=False):
 
     for (r, ruleSource) in rulesText:
         ruleLineNo += 1
-        if r == "\n":
+        # Normalize CRLF/CR newlines so rule parsing behaves the same on Windows and Unix.
+        r = r.rstrip("\r\n")
+        if r == "":
             continue
         if " ==> " not in r:
             if " ==>" in r:
@@ -66,10 +68,7 @@ def parseRules(ruleFiles, comby=False):
                 print("FAILED TO COMPILE RULE:", r, "FROM", ruleSource)
                 print("*" * 60)
                 continue
-        if (len(s[1]) > 0) and (s[1][-1] == "\n"):
-            rhs = s[1][:-1]
-        else:
-            rhs = s[1]
+        rhs = s[1]
         if rhs == "DO_NOT_MUTATE":
             ignoreRules.append(lhs)
         elif rhs == "SKIP_MUTATING_REST":

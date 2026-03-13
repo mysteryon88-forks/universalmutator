@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import subprocess
+import sys
 from unittest import TestCase
 
 
@@ -39,7 +40,9 @@ class TestTONExamples(TestCase):
         with open("mutate.out", "w") as f:
             r = subprocess.call(
                 [
-                    "mutate",
+                    sys.executable,
+                    "-m",
+                    "universalmutator.genmutants",
                     filename,
                     language,
                     "--only",

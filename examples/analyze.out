@@ -1,8 +1,257 @@
 ANALYZING foo.py
-COMMAND: ** ['python foo.py'] **
+COMMAND: ** ['python MUTANT'] **
 ================================================================================
 #1: [0.0s 0.0% DONE]
-MUTANT: ./foo.mutant.47.py
+MUTANT: .\foo.mutant.20.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x == 10:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.20.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.20.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.20.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.20.py KILLED IN 0.1738276481628418 (RETURN CODE 1)
+  RUNNING SCORE: 1.0
+================================================================================
+#2: [0.18s 1.45% DONE]
+MUTANT: .\foo.mutant.15.py
+*** Original
+--- Mutant
+***************
+*** 3,9 ****
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 20
+      while x > 10:
+          x -= 1
+      return x
+--- 3,9 ----
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = -1
+      while x > 10:
+          x -= 1
+      return x
+
+
+RUNNING .\foo.mutant.15.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.15.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.15.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.15.py KILLED IN 0.17940425872802734 (RETURN CODE 1)
+  RUNNING SCORE: 1.0
+================================================================================
+#3: [0.36s 2.9% DONE]
+MUTANT: .\foo.mutant.33.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         x /= 1
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.33.py...
+
+HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
+.\foo.mutant.33.py KILLED IN 5.054495334625244 (RETURN CODE None)
+  RUNNING SCORE: 1.0
+================================================================================
+#4: [5.42s 4.35% DONE]
+MUTANT: .\foo.mutant.36.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         x = 1
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.36.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.36.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.36.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.36.py KILLED IN 0.17511796951293945 (RETURN CODE 1)
+  RUNNING SCORE: 1.0
+================================================================================
+#5: [5.59s 5.8% DONE]
+MUTANT: .\foo.mutant.42.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         pass
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.42.py...
+
+HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
+.\foo.mutant.42.py KILLED IN 5.053830862045288 (RETURN CODE None)
+  RUNNING SCORE: 1.0
+================================================================================
+#6: [10.65s 7.25% DONE]
+MUTANT: .\foo.mutant.67.py
+*** Original
+--- Mutant
+***************
+*** 13,17 ****
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ == '__main__':
+      main()
+--- 13,17 ----
+      v = myfunction(y)
+      assert v==10
+  
+! if not (__name__ == '__main__'):
+      main()
+
+
+RUNNING .\foo.mutant.67.py...
+.\foo.mutant.67.py NOT KILLED
+  RUNNING SCORE: 0.8333333333333334
+================================================================================
+#7: [10.82s 8.7% DONE]
+MUTANT: .\foo.mutant.34.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         x %= 1
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.34.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.34.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.34.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.34.py KILLED IN 0.16920137405395508 (RETURN CODE 1)
+  RUNNING SCORE: 0.8571428571428571
+================================================================================
+#8: [10.99s 10.14% DONE]
+MUTANT: .\foo.mutant.16.py
+*** Original
+--- Mutant
+***************
+*** 3,9 ****
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 20
+      while x > 10:
+          x -= 1
+      return x
+--- 3,9 ----
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = (20+1)
+      while x > 10:
+          x -= 1
+      return x
+
+
+RUNNING .\foo.mutant.16.py...
+4
+.\foo.mutant.16.py NOT KILLED
+  RUNNING SCORE: 0.75
+================================================================================
+#9: [11.18s 11.59% DONE]
+MUTANT: .\foo.mutant.45.py
 *** Original
 --- Mutant
 ***************
@@ -24,392 +273,13 @@ MUTANT: ./foo.mutant.47.py
   
 
 
-RUNNING ./foo.mutant.47.py...
+RUNNING .\foo.mutant.45.py...
 1
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.47.py KILLED IN 0.17923378944396973 (RETURN CODE 1)
-  RUNNING SCORE: 1.0
+.\foo.mutant.45.py NOT KILLED
+  RUNNING SCORE: 0.6666666666666666
 ================================================================================
-#2: [0.19s 1.41% DONE]
-MUTANT: ./foo.mutant.8.py
-*** Original
---- Mutant
-***************
-*** 1,7 ****
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < 6):
-          print(x)
-          x = 20
-      while (x > (10-1)):
---- 1,7 ----
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < -1):
-          print(x)
-          x = 20
-      while (x > (10-1)):
-
-
-RUNNING ./foo.mutant.8.py...
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.8.py KILLED IN 0.11300516128540039 (RETURN CODE 1)
-  RUNNING SCORE: 1.0
-================================================================================
-#3: [0.3s 2.82% DONE]
-MUTANT: ./foo.mutant.0.py
-*** Original
---- Mutant
-***************
-*** 1,4 ****
-! from __future__ import print_function
-  
-  def myfunction(x):
-      if (x < 6):
---- 1,4 ----
-! pass
-  
-  def myfunction(x):
-      if (x < 6):
-
-
-RUNNING ./foo.mutant.0.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.0.py KILLED IN 0.12555956840515137 (RETURN CODE 1)
-  RUNNING SCORE: 1.0
-================================================================================
-#4: [0.43s 4.23% DONE]
-MUTANT: ./foo.mutant.13.py
-*** Original
---- Mutant
-***************
-*** 3,9 ****
-  def myfunction(x):
-      if (x < 6):
-          print(x)
-!         x = 20
-      while (x > (10-1)):
-          x -= 1
-      return x
---- 3,9 ----
-  def myfunction(x):
-      if (x < 6):
-          print(x)
-!         x = 0
-      while (x > (10-1)):
-          x -= 1
-      return x
-
-
-RUNNING ./foo.mutant.13.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.13.py KILLED IN 0.09709763526916504 (RETURN CODE 1)
-  RUNNING SCORE: 1.0
-================================================================================
-#5: [0.54s 5.63% DONE]
-MUTANT: ./foo.mutant.20.py
-*** Original
---- Mutant
-***************
-*** 4,10 ****
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10-1)):
-          x -= 1
-      return x
-  
---- 4,10 ----
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10*1)):
-          x -= 1
-      return x
-  
-
-
-RUNNING ./foo.mutant.20.py...
-4
-./foo.mutant.20.py NOT KILLED
-  RUNNING SCORE: 0.8
-================================================================================
-#6: [0.74s 7.04% DONE]
-MUTANT: ./foo.mutant.58.py
-*** Original
---- Mutant
-***************
-*** 11,17 ****
-  def main():
-      y = 4
-      v = myfunction(y)
-!     assert v==10
-  
-  if __name__ == '__main__':
-      main()
---- 11,17 ----
-  def main():
-      y = 4
-      v = myfunction(y)
-!     assert v==0
-  
-  if __name__ == '__main__':
-      main()
-
-
-RUNNING ./foo.mutant.58.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==0
-           ^^^^
-AssertionError
-./foo.mutant.58.py KILLED IN 0.11405229568481445 (RETURN CODE 1)
-  RUNNING SCORE: 0.8333333333333334
-================================================================================
-#7: [0.86s 8.45% DONE]
-MUTANT: ./foo.mutant.64.py
-*** Original
---- Mutant
-***************
-*** 13,17 ****
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ == '__main__':
-      main()
---- 13,17 ----
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ != '__main__':
-      main()
-
-
-RUNNING ./foo.mutant.64.py...
-./foo.mutant.64.py NOT KILLED
-  RUNNING SCORE: 0.7142857142857143
-================================================================================
-#8: [0.97s 9.86% DONE]
-MUTANT: ./foo.mutant.34.py
-*** Original
---- Mutant
-***************
-*** 5,11 ****
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= 1
-      return x
-  
-  def main():
---- 5,11 ----
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x *= 1
-      return x
-  
-  def main():
-
-
-RUNNING ./foo.mutant.34.py...
-
-HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
-./foo.mutant.34.py KILLED IN 5.077595233917236 (RETURN CODE None)
-  RUNNING SCORE: 0.75
-================================================================================
-#9: [6.06s 11.27% DONE]
-MUTANT: ./foo.mutant.66.py
-*** Original
---- Mutant
-***************
-*** 13,17 ****
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ == '__main__':
-      main()
---- 13,17 ----
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ >= '__main__':
-      main()
-
-
-RUNNING ./foo.mutant.66.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.66.py KILLED IN 0.12610316276550293 (RETURN CODE 1)
-  RUNNING SCORE: 0.7777777777777778
-================================================================================
-#10: [6.19s 12.68% DONE]
-MUTANT: ./foo.mutant.18.py
-*** Original
---- Mutant
-***************
-*** 3,9 ****
-  def myfunction(x):
-      if (x < 6):
-          print(x)
-!         x = 20
-      while (x > (10-1)):
-          x -= 1
-      return x
---- 3,9 ----
-  def myfunction(x):
-      if (x < 6):
-          print(x)
-!         pass
-      while (x > (10-1)):
-          x -= 1
-      return x
-
-
-RUNNING ./foo.mutant.18.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.18.py KILLED IN 0.11788296699523926 (RETURN CODE 1)
-  RUNNING SCORE: 0.8
-================================================================================
-#11: [6.33s 14.08% DONE]
-MUTANT: ./foo.mutant.30.py
-*** Original
---- Mutant
-***************
-*** 4,10 ****
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10-1)):
-          x -= 1
-      return x
-  
---- 4,10 ----
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10-(1+1))):
-          x -= 1
-      return x
-  
-
-
-RUNNING ./foo.mutant.30.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.30.py KILLED IN 0.15216326713562012 (RETURN CODE 1)
-  RUNNING SCORE: 0.8181818181818182
-================================================================================
-#12: [6.49s 15.49% DONE]
-MUTANT: ./foo.mutant.68.py
-*** Original
---- Mutant
-***************
-*** 13,17 ****
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ == '__main__':
-      main()
---- 13,17 ----
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ < '__main__':
-      main()
-
-
-RUNNING ./foo.mutant.68.py...
-./foo.mutant.68.py NOT KILLED
-  RUNNING SCORE: 0.75
-================================================================================
-#13: [6.64s 16.9% DONE]
-MUTANT: ./foo.mutant.36.py
-*** Original
---- Mutant
-***************
-*** 5,11 ****
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= 1
-      return x
-  
-  def main():
---- 5,11 ----
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x %= 1
-      return x
-  
-  def main():
-
-
-RUNNING ./foo.mutant.36.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.36.py KILLED IN 0.11724424362182617 (RETURN CODE 1)
-  RUNNING SCORE: 0.7692307692307693
-================================================================================
-#14: [6.76s 18.31% DONE]
-MUTANT: ./foo.mutant.59.py
+#10: [11.35s 13.04% DONE]
+MUTANT: .\foo.mutant.57.py
 *** Original
 --- Mutant
 ***************
@@ -431,55 +301,78 @@ MUTANT: ./foo.mutant.59.py
       main()
 
 
-RUNNING ./foo.mutant.59.py...
+RUNNING .\foo.mutant.57.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.57.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.57.py", line 14, in main
     assert v==1
            ^^^^
 AssertionError
-./foo.mutant.59.py KILLED IN 0.1158909797668457 (RETURN CODE 1)
-  RUNNING SCORE: 0.7857142857142857
+.\foo.mutant.57.py KILLED IN 0.17586207389831543 (RETURN CODE 1)
+  RUNNING SCORE: 0.7
 ================================================================================
-#15: [6.9s 19.72% DONE]
-MUTANT: ./foo.mutant.23.py
+#11: [11.53s 14.49% DONE]
+MUTANT: .\foo.mutant.66.py
 *** Original
 --- Mutant
 ***************
-*** 4,10 ****
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10-1)):
-          x -= 1
-      return x
+*** 13,17 ****
+      v = myfunction(y)
+      assert v==10
   
---- 4,10 ----
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x == (10-1)):
-          x -= 1
-      return x
+! if __name__ == '__main__':
+      main()
+--- 13,17 ----
+      v = myfunction(y)
+      assert v==10
   
+! if __name__ < '__main__':
+      main()
 
 
-RUNNING ./foo.mutant.23.py...
+RUNNING .\foo.mutant.66.py...
+.\foo.mutant.66.py NOT KILLED
+  RUNNING SCORE: 0.6363636363636364
+================================================================================
+#12: [11.7s 15.94% DONE]
+MUTANT: .\foo.mutant.13.py
+*** Original
+--- Mutant
+***************
+*** 3,9 ****
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 20
+      while x > 10:
+          x -= 1
+      return x
+--- 3,9 ----
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 0
+      while x > 10:
+          x -= 1
+      return x
+
+
+RUNNING .\foo.mutant.13.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.13.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.13.py", line 14, in main
     assert v==10
            ^^^^^
 AssertionError
-./foo.mutant.23.py KILLED IN 0.1274251937866211 (RETURN CODE 1)
-  RUNNING SCORE: 0.8
+.\foo.mutant.13.py KILLED IN 0.16867756843566895 (RETURN CODE 1)
+  RUNNING SCORE: 0.6666666666666666
 ================================================================================
-#16: [7.04s 21.13% DONE]
-MUTANT: ./foo.mutant.46.py
+#13: [11.87s 17.39% DONE]
+MUTANT: .\foo.mutant.49.py
 *** Original
 --- Mutant
 ***************
@@ -495,188 +388,123 @@ MUTANT: ./foo.mutant.46.py
       return x
   
   def main():
-!     y = 0
+!     pass
       v = myfunction(y)
       assert v==10
   
 
 
-RUNNING ./foo.mutant.46.py...
-0
+RUNNING .\foo.mutant.49.py...
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.49.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.46.py KILLED IN 0.11632299423217773 (RETURN CODE 1)
-  RUNNING SCORE: 0.8125
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.49.py", line 13, in main
+    v = myfunction(y)
+                   ^
+NameError: name 'y' is not defined
+.\foo.mutant.49.py KILLED IN 0.17512845993041992 (RETURN CODE 1)
+  RUNNING SCORE: 0.6923076923076923
 ================================================================================
-#17: [7.2s 22.54% DONE]
-MUTANT: ./foo.mutant.9.py
+#14: [12.04s 18.84% DONE]
+MUTANT: .\foo.mutant.24.py
 *** Original
 --- Mutant
 ***************
-*** 1,7 ****
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < 6):
+*** 4,10 ****
+      if x < 6:
           print(x)
           x = 20
-      while (x > (10-1)):
---- 1,7 ----
-  from __future__ import print_function
+!     while x > 10:
+          x -= 1
+      return x
   
-  def myfunction(x):
-!     if (x < (6+1)):
+--- 4,10 ----
+      if x < 6:
           print(x)
           x = 20
-      while (x > (10-1)):
+!     while x > 0:
+          x -= 1
+      return x
+  
 
 
-RUNNING ./foo.mutant.9.py...
+RUNNING .\foo.mutant.24.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.24.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.24.py", line 14, in main
     assert v==10
            ^^^^^
 AssertionError
-./foo.mutant.9.py KILLED IN 0.11342883110046387 (RETURN CODE 1)
-  RUNNING SCORE: 0.8235294117647058
+.\foo.mutant.24.py KILLED IN 0.17545485496520996 (RETURN CODE 1)
+  RUNNING SCORE: 0.7142857142857143
 ================================================================================
-#18: [7.32s 23.94% DONE]
-MUTANT: ./foo.mutant.1.py
+#15: [12.22s 20.29% DONE]
+MUTANT: .\foo.mutant.28.py
 *** Original
 --- Mutant
 ***************
-*** 1,7 ****
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < 6):
+*** 4,10 ****
+      if x < 6:
           print(x)
           x = 20
-      while (x > (10-1)):
---- 1,7 ----
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x > 6):
-          print(x)
-          x = 20
-      while (x > (10-1)):
-
-
-RUNNING ./foo.mutant.1.py...
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.1.py KILLED IN 0.11642646789550781 (RETURN CODE 1)
-  RUNNING SCORE: 0.8333333333333334
-================================================================================
-#19: [7.44s 25.35% DONE]
-MUTANT: ./foo.mutant.39.py
-*** Original
---- Mutant
-***************
-*** 5,11 ****
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= 1
+!     while x > 10:
+          x -= 1
       return x
   
-  def main():
---- 5,11 ----
+--- 4,10 ----
+      if x < 6:
           print(x)
           x = 20
-      while (x > (10-1)):
-!         x -= 0
+!     while x > (10-1):
+          x -= 1
       return x
   
-  def main():
 
 
-RUNNING ./foo.mutant.39.py...
-
-HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
-./foo.mutant.39.py KILLED IN 5.062973737716675 (RETURN CODE None)
-  RUNNING SCORE: 0.8421052631578947
-================================================================================
-#20: [12.51s 26.76% DONE]
-MUTANT: ./foo.mutant.40.py
-*** Original
---- Mutant
-***************
-*** 5,11 ****
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= 1
-      return x
-  
-  def main():
---- 5,11 ----
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= -1
-      return x
-  
-  def main():
-
-
-RUNNING ./foo.mutant.40.py...
-
-HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
-./foo.mutant.40.py KILLED IN 5.099248647689819 (RETURN CODE None)
-  RUNNING SCORE: 0.85
-================================================================================
-#21: [17.62s 28.17% DONE]
-MUTANT: ./foo.mutant.5.py
-*** Original
---- Mutant
-***************
-*** 1,7 ****
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < 6):
-          print(x)
-          x = 20
-      while (x > (10-1)):
---- 1,7 ----
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x != 6):
-          print(x)
-          x = 20
-      while (x > (10-1)):
-
-
-RUNNING ./foo.mutant.5.py...
+RUNNING .\foo.mutant.28.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.28.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.28.py", line 14, in main
     assert v==10
            ^^^^^
 AssertionError
-./foo.mutant.5.py KILLED IN 0.06272053718566895 (RETURN CODE 1)
-  RUNNING SCORE: 0.8571428571428571
+.\foo.mutant.28.py KILLED IN 0.17358708381652832 (RETURN CODE 1)
+  RUNNING SCORE: 0.7333333333333333
 ================================================================================
-#22: [17.69s 29.58% DONE]
-MUTANT: ./foo.mutant.55.py
+#16: [12.39s 21.74% DONE]
+MUTANT: .\foo.mutant.48.py
+*** Original
+--- Mutant
+***************
+*** 9,15 ****
+      return x
+  
+  def main():
+!     y = 4
+      v = myfunction(y)
+      assert v==10
+  
+--- 9,15 ----
+      return x
+  
+  def main():
+!     y = (4-1)
+      v = myfunction(y)
+      assert v==10
+  
+
+
+RUNNING .\foo.mutant.48.py...
+3
+.\foo.mutant.48.py NOT KILLED
+  RUNNING SCORE: 0.6875
+================================================================================
+#17: [12.57s 23.19% DONE]
+MUTANT: .\foo.mutant.60.py
 *** Original
 --- Mutant
 ***************
@@ -692,60 +520,26 @@ MUTANT: ./foo.mutant.55.py
   def main():
       y = 4
       v = myfunction(y)
-!     assert v>=10
+!     assert v==(10-1)
   
   if __name__ == '__main__':
       main()
 
 
-RUNNING ./foo.mutant.55.py...
+RUNNING .\foo.mutant.60.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.60.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v>=10
-           ^^^^^
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.60.py", line 14, in main
+    assert v==(10-1)
+           ^^^^^^^^^
 AssertionError
-./foo.mutant.55.py KILLED IN 0.1637721061706543 (RETURN CODE 1)
-  RUNNING SCORE: 0.8636363636363636
+.\foo.mutant.60.py KILLED IN 0.17670106887817383 (RETURN CODE 1)
+  RUNNING SCORE: 0.7058823529411765
 ================================================================================
-#23: [17.86s 30.99% DONE]
-MUTANT: ./foo.mutant.6.py
-*** Original
---- Mutant
-***************
-*** 1,7 ****
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < 6):
-          print(x)
-          x = 20
-      while (x > (10-1)):
---- 1,7 ----
-  from __future__ import print_function
-  
-  def myfunction(x):
-!     if (x < 0):
-          print(x)
-          x = 20
-      while (x > (10-1)):
-
-
-RUNNING ./foo.mutant.6.py...
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.6.py KILLED IN 0.062036752700805664 (RETURN CODE 1)
-  RUNNING SCORE: 0.8695652173913043
-================================================================================
-#24: [17.93s 32.39% DONE]
-MUTANT: ./foo.mutant.65.py
+#18: [12.75s 24.64% DONE]
+MUTANT: .\foo.mutant.64.py
 *** Original
 --- Mutant
 ***************
@@ -759,31 +553,74 @@ MUTANT: ./foo.mutant.65.py
       v = myfunction(y)
       assert v==10
   
-! if __name__ <= '__main__':
+! if __name__ >= '__main__':
       main()
 
 
-RUNNING ./foo.mutant.65.py...
+RUNNING .\foo.mutant.64.py...
+4
+.\foo.mutant.64.py NOT KILLED
+  RUNNING SCORE: 0.6666666666666666
+================================================================================
+#19: [12.92s 26.09% DONE]
+MUTANT: .\foo.mutant.0.py
+*** Original
+--- Mutant
+***************
+*** 1,4 ****
+! from __future__ import print_function
+  
+  def myfunction(x):
+      if x < 6:
+--- 1,4 ----
+! pass
+  
+  def myfunction(x):
+      if x < 6:
+
+
+RUNNING .\foo.mutant.0.py...
+4
+.\foo.mutant.0.py NOT KILLED
+  RUNNING SCORE: 0.631578947368421
+================================================================================
+#20: [13.1s 27.54% DONE]
+MUTANT: .\foo.mutant.40.py
+*** Original
+--- Mutant
+***************
+*** 6,11 ****
+--- 6,12 ----
+          x = 20
+      while x > 10:
+          x -= 1
++         break;
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.40.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.40.py", line 18, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.40.py", line 15, in main
     assert v==10
            ^^^^^
 AssertionError
-./foo.mutant.65.py KILLED IN 0.1142740249633789 (RETURN CODE 1)
-  RUNNING SCORE: 0.875
+.\foo.mutant.40.py KILLED IN 0.17422795295715332 (RETURN CODE 1)
+  RUNNING SCORE: 0.65
 ================================================================================
-#25: [18.05s 33.8% DONE]
-MUTANT: ./foo.mutant.37.py
+#21: [13.27s 28.99% DONE]
+MUTANT: .\foo.mutant.31.py
 *** Original
 --- Mutant
 ***************
 *** 5,11 ****
           print(x)
           x = 20
-      while (x > (10-1)):
+      while x > 10:
 !         x -= 1
       return x
   
@@ -791,27 +628,475 @@ MUTANT: ./foo.mutant.37.py
 --- 5,11 ----
           print(x)
           x = 20
-      while (x > (10-1)):
+      while x > 10:
+!         x += 1
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.31.py...
+
+HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
+.\foo.mutant.31.py KILLED IN 5.055947542190552 (RETURN CODE None)
+  RUNNING SCORE: 0.6666666666666666
+================================================================================
+#22: [18.33s 30.43% DONE]
+MUTANT: .\foo.mutant.37.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 0
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.37.py...
+
+HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
+.\foo.mutant.37.py KILLED IN 5.0543577671051025 (RETURN CODE None)
+  RUNNING SCORE: 0.6818181818181818
+================================================================================
+#23: [23.38s 31.88% DONE]
+MUTANT: .\foo.mutant.25.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 1:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.25.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.25.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.25.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.25.py KILLED IN 0.12412595748901367 (RETURN CODE 1)
+  RUNNING SCORE: 0.6956521739130435
+================================================================================
+#24: [23.51s 33.33% DONE]
+MUTANT: .\foo.mutant.3.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x <= 6:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.3.py...
+4
+.\foo.mutant.3.py NOT KILLED
+  RUNNING SCORE: 0.6666666666666666
+================================================================================
+#25: [23.62s 34.78% DONE]
+MUTANT: .\foo.mutant.41.py
+*** Original
+--- Mutant
+***************
+*** 6,11 ****
+--- 6,12 ----
+          x = 20
+      while x > 10:
+          x -= 1
++         continue;
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.41.py...
+4
+.\foo.mutant.41.py NOT KILLED
+  RUNNING SCORE: 0.64
+================================================================================
+#26: [23.79s 36.23% DONE]
+MUTANT: .\foo.mutant.9.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < (6+1):
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.9.py...
+4
+.\foo.mutant.9.py NOT KILLED
+  RUNNING SCORE: 0.6153846153846154
+================================================================================
+#27: [23.91s 37.68% DONE]
+MUTANT: .\foo.mutant.6.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 0:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.6.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.6.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.6.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.6.py KILLED IN 0.11838531494140625 (RETURN CODE 1)
+  RUNNING SCORE: 0.6296296296296297
+================================================================================
+#28: [24.03s 39.13% DONE]
+MUTANT: .\foo.mutant.35.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
 !         x =- 1
       return x
   
   def main():
 
 
-RUNNING ./foo.mutant.37.py...
+RUNNING .\foo.mutant.35.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.35.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.35.py", line 14, in main
     assert v==10
            ^^^^^
 AssertionError
-./foo.mutant.37.py KILLED IN 0.11506485939025879 (RETURN CODE 1)
-  RUNNING SCORE: 0.88
+.\foo.mutant.35.py KILLED IN 0.16949939727783203 (RETURN CODE 1)
+  RUNNING SCORE: 0.6428571428571429
 ================================================================================
-#26: [18.2s 35.21% DONE]
-MUTANT: ./foo.mutant.56.py
+#29: [24.2s 40.58% DONE]
+MUTANT: .\foo.mutant.10.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < (6-1):
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.10.py...
+4
+.\foo.mutant.10.py NOT KILLED
+  RUNNING SCORE: 0.6206896551724138
+================================================================================
+#30: [24.32s 42.03% DONE]
+MUTANT: .\foo.mutant.68.py
+*** Original
+--- Mutant
+***************
+*** 14,17 ****
+      assert v==10
+  
+  if __name__ == '__main__':
+!     main()
+--- 14,17 ----
+      assert v==10
+  
+  if __name__ == '__main__':
+!     pass
+
+
+RUNNING .\foo.mutant.68.py...
+.\foo.mutant.68.py NOT KILLED
+  RUNNING SCORE: 0.6
+================================================================================
+#31: [24.49s 43.48% DONE]
+MUTANT: .\foo.mutant.58.py
+*** Original
+--- Mutant
+***************
+*** 11,17 ****
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==10
+  
+  if __name__ == '__main__':
+      main()
+--- 11,17 ----
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==-1
+  
+  if __name__ == '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.58.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.58.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.58.py", line 14, in main
+    assert v==-1
+           ^^^^^
+AssertionError
+.\foo.mutant.58.py KILLED IN 0.17124414443969727 (RETURN CODE 1)
+  RUNNING SCORE: 0.6129032258064516
+================================================================================
+#32: [24.66s 44.93% DONE]
+MUTANT: .\foo.mutant.2.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x == 6:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.2.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.2.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.2.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.2.py KILLED IN 0.17417168617248535 (RETURN CODE 1)
+  RUNNING SCORE: 0.625
+================================================================================
+#33: [24.84s 46.38% DONE]
+MUTANT: .\foo.mutant.4.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x >= 6:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.4.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.4.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.4.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.4.py KILLED IN 0.16901588439941406 (RETURN CODE 1)
+  RUNNING SCORE: 0.6363636363636364
+================================================================================
+#34: [25.0s 47.83% DONE]
+MUTANT: .\foo.mutant.21.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x >= 10:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.21.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.21.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.21.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.21.py KILLED IN 0.17255353927612305 (RETURN CODE 1)
+  RUNNING SCORE: 0.6470588235294118
+================================================================================
+#35: [25.18s 49.28% DONE]
+MUTANT: .\foo.mutant.17.py
+*** Original
+--- Mutant
+***************
+*** 3,9 ****
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 20
+      while x > 10:
+          x -= 1
+      return x
+--- 3,9 ----
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = (20-1)
+      while x > 10:
+          x -= 1
+      return x
+
+
+RUNNING .\foo.mutant.17.py...
+4
+.\foo.mutant.17.py NOT KILLED
+  RUNNING SCORE: 0.6285714285714286
+================================================================================
+#36: [25.36s 50.72% DONE]
+MUTANT: .\foo.mutant.38.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= -1
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.38.py...
+
+HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
+.\foo.mutant.38.py KILLED IN 5.089492321014404 (RETURN CODE None)
+  RUNNING SCORE: 0.6388888888888888
+================================================================================
+#37: [30.45s 52.17% DONE]
+MUTANT: .\foo.mutant.54.py
 *** Original
 --- Mutant
 ***************
@@ -833,20 +1118,43 @@ MUTANT: ./foo.mutant.56.py
       main()
 
 
-RUNNING ./foo.mutant.56.py...
+RUNNING .\foo.mutant.54.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.54.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.54.py", line 14, in main
     assert v>10
            ^^^^
 AssertionError
-./foo.mutant.56.py KILLED IN 0.17843103408813477 (RETURN CODE 1)
-  RUNNING SCORE: 0.8846153846153846
+.\foo.mutant.54.py KILLED IN 0.22614550590515137 (RETURN CODE 1)
+  RUNNING SCORE: 0.6486486486486487
 ================================================================================
-#27: [18.39s 36.62% DONE]
-MUTANT: ./foo.mutant.61.py
+#38: [30.67s 53.62% DONE]
+MUTANT: .\foo.mutant.65.py
+*** Original
+--- Mutant
+***************
+*** 13,17 ****
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ == '__main__':
+      main()
+--- 13,17 ----
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ > '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.65.py...
+.\foo.mutant.65.py NOT KILLED
+  RUNNING SCORE: 0.631578947368421
+================================================================================
+#39: [30.85s 55.07% DONE]
+MUTANT: .\foo.mutant.59.py
 *** Original
 --- Mutant
 ***************
@@ -868,141 +1176,20 @@ MUTANT: ./foo.mutant.61.py
       main()
 
 
-RUNNING ./foo.mutant.61.py...
+RUNNING .\foo.mutant.59.py...
 4
 Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.59.py", line 17, in <module>
     main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.59.py", line 14, in main
     assert v==(10+1)
            ^^^^^^^^^
 AssertionError
-./foo.mutant.61.py KILLED IN 0.06344199180603027 (RETURN CODE 1)
-  RUNNING SCORE: 0.8888888888888888
+.\foo.mutant.59.py KILLED IN 0.16988706588745117 (RETURN CODE 1)
+  RUNNING SCORE: 0.6410256410256411
 ================================================================================
-#28: [18.48s 38.03% DONE]
-MUTANT: ./foo.mutant.41.py
-*** Original
---- Mutant
-***************
-*** 5,11 ****
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= 1
-      return x
-  
-  def main():
---- 5,11 ----
-          print(x)
-          x = 20
-      while (x > (10-1)):
-!         x -= (1+1)
-      return x
-  
-  def main():
-
-
-RUNNING ./foo.mutant.41.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.41.py KILLED IN 0.16735219955444336 (RETURN CODE 1)
-  RUNNING SCORE: 0.8928571428571429
-================================================================================
-#29: [18.66s 39.44% DONE]
-MUTANT: ./foo.mutant.57.py
-*** Original
---- Mutant
-***************
-*** 11,17 ****
-  def main():
-      y = 4
-      v = myfunction(y)
-!     assert v==10
-  
-  if __name__ == '__main__':
-      main()
---- 11,17 ----
-  def main():
-      y = 4
-      v = myfunction(y)
-!     assert v<10
-  
-  if __name__ == '__main__':
-      main()
-
-
-RUNNING ./foo.mutant.57.py...
-4
-./foo.mutant.57.py NOT KILLED
-  RUNNING SCORE: 0.8620689655172413
-================================================================================
-#30: [18.72s 40.85% DONE]
-MUTANT: ./foo.mutant.21.py
-*** Original
---- Mutant
-***************
-*** 4,10 ****
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10-1)):
-          x -= 1
-      return x
-  
---- 4,10 ----
-      if (x < 6):
-          print(x)
-          x = 20
-!     while (x > (10%1)):
-          x -= 1
-      return x
-  
-
-
-RUNNING ./foo.mutant.21.py...
-4
-Traceback (most recent call last):
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 17, in <module>
-    main()
-  File "/mnt/data/universalmutator-master/universalmutator-master/examples/foo.py", line 14, in main
-    assert v==10
-           ^^^^^
-AssertionError
-./foo.mutant.21.py KILLED IN 0.11383891105651855 (RETURN CODE 1)
-  RUNNING SCORE: 0.8666666666666667
-================================================================================
-#31: [18.84s 42.25% DONE]
-MUTANT: ./foo.mutant.69.py
-*** Original
---- Mutant
-***************
-*** 13,17 ****
-      v = myfunction(y)
-      assert v==10
-  
-! if __name__ == '__main__':
-      main()
---- 13,17 ----
-      v = myfunction(y)
-      assert v==10
-  
-! if not (__name__ == '__main__'):
-      main()
-
-
-RUNNING ./foo.mutant.69.py...
-./foo.mutant.69.py NOT KILLED
-  RUNNING SCORE: 0.8387096774193549
-================================================================================
-#32: [18.94s 43.66% DONE]
-MUTANT: ./foo.mutant.63.py
+#40: [31.02s 56.52% DONE]
+MUTANT: .\foo.mutant.61.py
 *** Original
 --- Mutant
 ***************
@@ -1024,20 +1211,48 @@ MUTANT: ./foo.mutant.63.py
       main()
 
 
-RUNNING ./foo.mutant.63.py...
+RUNNING .\foo.mutant.61.py...
 4
-./foo.mutant.63.py NOT KILLED
-  RUNNING SCORE: 0.8125
+.\foo.mutant.61.py NOT KILLED
+  RUNNING SCORE: 0.625
 ================================================================================
-#33: [19.08s 45.07% DONE]
-MUTANT: ./foo.mutant.33.py
+#41: [31.19s 57.97% DONE]
+MUTANT: .\foo.mutant.23.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x != 10:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.23.py...
+4
+.\foo.mutant.23.py NOT KILLED
+  RUNNING SCORE: 0.6097560975609756
+================================================================================
+#42: [31.37s 59.42% DONE]
+MUTANT: .\foo.mutant.32.py
 *** Original
 --- Mutant
 ***************
 *** 5,11 ****
           print(x)
           x = 20
-      while (x > (10-1)):
+      while x > 10:
 !         x -= 1
       return x
   
@@ -1045,11 +1260,877 @@ MUTANT: ./foo.mutant.33.py
 --- 5,11 ----
           print(x)
           x = 20
-      while (x > (10-1)):
-!         x += 1
+      while x > 10:
+!         x *= 1
       return x
   
   def main():
 
 
-RUNNING ./foo.mutant.33.py...
+RUNNING .\foo.mutant.32.py...
+
+HAD TO TERMINATE ANALYSIS (TIMEOUT OR EXCEPTION)
+.\foo.mutant.32.py KILLED IN 5.077341318130493 (RETURN CODE None)
+  RUNNING SCORE: 0.6190476190476191
+================================================================================
+#43: [36.44s 60.87% DONE]
+MUTANT: .\foo.mutant.50.py
+*** Original
+--- Mutant
+***************
+*** 10,16 ****
+  
+  def main():
+      y = 4
+!     v = myfunction(y)
+      assert v==10
+  
+  if __name__ == '__main__':
+--- 10,16 ----
+  
+  def main():
+      y = 4
+!     pass
+      assert v==10
+  
+  if __name__ == '__main__':
+
+
+RUNNING .\foo.mutant.50.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.50.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.50.py", line 14, in main
+    assert v==10
+           ^
+NameError: name 'v' is not defined
+.\foo.mutant.50.py KILLED IN 0.2986745834350586 (RETURN CODE 1)
+  RUNNING SCORE: 0.627906976744186
+================================================================================
+#44: [36.74s 62.32% DONE]
+MUTANT: .\foo.mutant.52.py
+*** Original
+--- Mutant
+***************
+*** 11,17 ****
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==10
+  
+  if __name__ == '__main__':
+      main()
+--- 11,17 ----
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v<=10
+  
+  if __name__ == '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.52.py...
+4
+.\foo.mutant.52.py NOT KILLED
+  RUNNING SCORE: 0.6136363636363636
+================================================================================
+#45: [36.98s 63.77% DONE]
+MUTANT: .\foo.mutant.8.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < -1:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.8.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.8.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.8.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.8.py KILLED IN 0.25499796867370605 (RETURN CODE 1)
+  RUNNING SCORE: 0.6222222222222222
+================================================================================
+#46: [37.23s 65.22% DONE]
+MUTANT: .\foo.mutant.19.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x < 10:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.19.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.19.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.19.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.19.py KILLED IN 0.3358161449432373 (RETURN CODE 1)
+  RUNNING SCORE: 0.6304347826086957
+================================================================================
+#47: [37.57s 66.67% DONE]
+MUTANT: .\foo.mutant.30.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while not (x > 10):
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.30.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.30.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.30.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.30.py KILLED IN 0.23923206329345703 (RETURN CODE 1)
+  RUNNING SCORE: 0.6382978723404256
+================================================================================
+#48: [37.81s 68.12% DONE]
+MUTANT: .\foo.mutant.18.py
+*** Original
+--- Mutant
+***************
+*** 3,9 ****
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 20
+      while x > 10:
+          x -= 1
+      return x
+--- 3,9 ----
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         pass
+      while x > 10:
+          x -= 1
+      return x
+
+
+RUNNING .\foo.mutant.18.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.18.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.18.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.18.py KILLED IN 0.22954702377319336 (RETURN CODE 1)
+  RUNNING SCORE: 0.6458333333333334
+================================================================================
+#49: [38.04s 69.57% DONE]
+MUTANT: .\foo.mutant.22.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x <= 10:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.22.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.22.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.22.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.22.py KILLED IN 0.3455684185028076 (RETURN CODE 1)
+  RUNNING SCORE: 0.6530612244897959
+================================================================================
+#50: [38.39s 71.01% DONE]
+MUTANT: .\foo.mutant.14.py
+*** Original
+--- Mutant
+***************
+*** 3,9 ****
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 20
+      while x > 10:
+          x -= 1
+      return x
+--- 3,9 ----
+  def myfunction(x):
+      if x < 6:
+          print(x)
+!         x = 1
+      while x > 10:
+          x -= 1
+      return x
+
+
+RUNNING .\foo.mutant.14.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.14.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.14.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.14.py KILLED IN 0.5286123752593994 (RETURN CODE 1)
+  RUNNING SCORE: 0.66
+================================================================================
+#51: [38.92s 72.46% DONE]
+MUTANT: .\foo.mutant.5.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x != 6:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.5.py...
+4
+.\foo.mutant.5.py NOT KILLED
+  RUNNING SCORE: 0.6470588235294118
+================================================================================
+#52: [39.74s 73.91% DONE]
+MUTANT: .\foo.mutant.56.py
+*** Original
+--- Mutant
+***************
+*** 11,17 ****
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==10
+  
+  if __name__ == '__main__':
+      main()
+--- 11,17 ----
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==0
+  
+  if __name__ == '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.56.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.56.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.56.py", line 14, in main
+    assert v==0
+           ^^^^
+AssertionError
+.\foo.mutant.56.py KILLED IN 0.5630462169647217 (RETURN CODE 1)
+  RUNNING SCORE: 0.6538461538461539
+================================================================================
+#53: [40.3s 75.36% DONE]
+MUTANT: .\foo.mutant.55.py
+*** Original
+--- Mutant
+***************
+*** 11,17 ****
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==10
+  
+  if __name__ == '__main__':
+      main()
+--- 11,17 ----
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v<10
+  
+  if __name__ == '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.55.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.55.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.55.py", line 14, in main
+    assert v<10
+           ^^^^
+AssertionError
+.\foo.mutant.55.py KILLED IN 0.3678109645843506 (RETURN CODE 1)
+  RUNNING SCORE: 0.660377358490566
+================================================================================
+#54: [40.68s 76.81% DONE]
+MUTANT: .\foo.mutant.12.py
+*** Original
+--- Mutant
+***************
+*** 2,8 ****
+  
+  def myfunction(x):
+      if x < 6:
+!         print(x)
+          x = 20
+      while x > 10:
+          x -= 1
+--- 2,8 ----
+  
+  def myfunction(x):
+      if x < 6:
+!         pass
+          x = 20
+      while x > 10:
+          x -= 1
+
+
+RUNNING .\foo.mutant.12.py...
+.\foo.mutant.12.py NOT KILLED
+  RUNNING SCORE: 0.6481481481481481
+================================================================================
+#55: [41.26s 78.26% DONE]
+MUTANT: .\foo.mutant.53.py
+*** Original
+--- Mutant
+***************
+*** 11,17 ****
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==10
+  
+  if __name__ == '__main__':
+      main()
+--- 11,17 ----
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v>=10
+  
+  if __name__ == '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.53.py...
+4
+.\foo.mutant.53.py NOT KILLED
+  RUNNING SCORE: 0.6363636363636364
+================================================================================
+#56: [41.81s 79.71% DONE]
+MUTANT: .\foo.mutant.1.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x > 6:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.1.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.1.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.1.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.1.py KILLED IN 0.44242310523986816 (RETURN CODE 1)
+  RUNNING SCORE: 0.6428571428571429
+================================================================================
+#57: [42.26s 81.16% DONE]
+MUTANT: .\foo.mutant.43.py
+*** Original
+--- Mutant
+***************
+*** 6,12 ****
+          x = 20
+      while x > 10:
+          x -= 1
+!     return x
+  
+  def main():
+      y = 4
+--- 6,12 ----
+          x = 20
+      while x > 10:
+          x -= 1
+!     return None
+  
+  def main():
+      y = 4
+
+
+RUNNING .\foo.mutant.43.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.43.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.43.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.43.py KILLED IN 0.29427123069763184 (RETURN CODE 1)
+  RUNNING SCORE: 0.6491228070175439
+================================================================================
+#58: [42.55s 82.61% DONE]
+MUTANT: .\foo.mutant.62.py
+*** Original
+--- Mutant
+***************
+*** 13,17 ****
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ == '__main__':
+      main()
+--- 13,17 ----
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ != '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.62.py...
+.\foo.mutant.62.py NOT KILLED
+  RUNNING SCORE: 0.6379310344827587
+================================================================================
+#59: [42.98s 84.06% DONE]
+MUTANT: .\foo.mutant.47.py
+*** Original
+--- Mutant
+***************
+*** 9,15 ****
+      return x
+  
+  def main():
+!     y = 4
+      v = myfunction(y)
+      assert v==10
+  
+--- 9,15 ----
+      return x
+  
+  def main():
+!     y = (4+1)
+      v = myfunction(y)
+      assert v==10
+  
+
+
+RUNNING .\foo.mutant.47.py...
+5
+.\foo.mutant.47.py NOT KILLED
+  RUNNING SCORE: 0.6271186440677966
+================================================================================
+#60: [43.63s 85.51% DONE]
+MUTANT: .\foo.mutant.44.py
+*** Original
+--- Mutant
+***************
+*** 9,15 ****
+      return x
+  
+  def main():
+!     y = 4
+      v = myfunction(y)
+      assert v==10
+  
+--- 9,15 ----
+      return x
+  
+  def main():
+!     y = 0
+      v = myfunction(y)
+      assert v==10
+  
+
+
+RUNNING .\foo.mutant.44.py...
+0
+.\foo.mutant.44.py NOT KILLED
+  RUNNING SCORE: 0.6166666666666667
+================================================================================
+#61: [44.23s 86.96% DONE]
+MUTANT: .\foo.mutant.39.py
+*** Original
+--- Mutant
+***************
+*** 5,11 ****
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= 1
+      return x
+  
+  def main():
+--- 5,11 ----
+          print(x)
+          x = 20
+      while x > 10:
+!         x -= (1+1)
+      return x
+  
+  def main():
+
+
+RUNNING .\foo.mutant.39.py...
+4
+.\foo.mutant.39.py NOT KILLED
+  RUNNING SCORE: 0.6065573770491803
+================================================================================
+#62: [44.65s 88.41% DONE]
+MUTANT: .\foo.mutant.26.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > -1:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.26.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.26.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.26.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.26.py KILLED IN 0.4979538917541504 (RETURN CODE 1)
+  RUNNING SCORE: 0.6129032258064516
+================================================================================
+#63: [45.15s 89.86% DONE]
+MUTANT: .\foo.mutant.27.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > (10+1):
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.27.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.27.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.27.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.27.py KILLED IN 0.48221254348754883 (RETURN CODE 1)
+  RUNNING SCORE: 0.6190476190476191
+================================================================================
+#64: [45.64s 91.3% DONE]
+MUTANT: .\foo.mutant.7.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 1:
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.7.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.7.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.7.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.7.py KILLED IN 0.5585896968841553 (RETURN CODE 1)
+  RUNNING SCORE: 0.625
+================================================================================
+#65: [46.2s 92.75% DONE]
+MUTANT: .\foo.mutant.63.py
+*** Original
+--- Mutant
+***************
+*** 13,17 ****
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ == '__main__':
+      main()
+--- 13,17 ----
+      v = myfunction(y)
+      assert v==10
+  
+! if __name__ <= '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.63.py...
+4
+.\foo.mutant.63.py NOT KILLED
+  RUNNING SCORE: 0.6153846153846154
+================================================================================
+#66: [46.78s 94.2% DONE]
+MUTANT: .\foo.mutant.51.py
+*** Original
+--- Mutant
+***************
+*** 11,17 ****
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v==10
+  
+  if __name__ == '__main__':
+      main()
+--- 11,17 ----
+  def main():
+      y = 4
+      v = myfunction(y)
+!     assert v!=10
+  
+  if __name__ == '__main__':
+      main()
+
+
+RUNNING .\foo.mutant.51.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.51.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.51.py", line 14, in main
+    assert v!=10
+           ^^^^^
+AssertionError
+.\foo.mutant.51.py KILLED IN 0.47078514099121094 (RETURN CODE 1)
+  RUNNING SCORE: 0.6212121212121212
+================================================================================
+#67: [47.25s 95.65% DONE]
+MUTANT: .\foo.mutant.29.py
+*** Original
+--- Mutant
+***************
+*** 4,10 ****
+      if x < 6:
+          print(x)
+          x = 20
+!     while x > 10:
+          x -= 1
+      return x
+  
+--- 4,10 ----
+      if x < 6:
+          print(x)
+          x = 20
+!     if x > 10:
+          x -= 1
+      return x
+  
+
+
+RUNNING .\foo.mutant.29.py...
+4
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.29.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.29.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.29.py KILLED IN 0.4970979690551758 (RETURN CODE 1)
+  RUNNING SCORE: 0.6268656716417911
+================================================================================
+#68: [47.75s 97.1% DONE]
+MUTANT: .\foo.mutant.11.py
+*** Original
+--- Mutant
+***************
+*** 1,7 ****
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if x < 6:
+          print(x)
+          x = 20
+      while x > 10:
+--- 1,7 ----
+  from __future__ import print_function
+  
+  def myfunction(x):
+!     if not (x < 6):
+          print(x)
+          x = 20
+      while x > 10:
+
+
+RUNNING .\foo.mutant.11.py...
+Traceback (most recent call last):
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.11.py", line 17, in <module>
+    main()
+  File "C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator\examples\foo.mutant.11.py", line 14, in main
+    assert v==10
+           ^^^^^
+AssertionError
+.\foo.mutant.11.py KILLED IN 0.519709587097168 (RETURN CODE 1)
+  RUNNING SCORE: 0.6323529411764706
+================================================================================
+#69: [48.27s 98.55% DONE]
+MUTANT: .\foo.mutant.46.py
+*** Original
+--- Mutant
+***************
+*** 9,15 ****
+      return x
+  
+  def main():
+!     y = 4
+      v = myfunction(y)
+      assert v==10
+  
+--- 9,15 ----
+      return x
+  
+  def main():
+!     y = -1
+      v = myfunction(y)
+      assert v==10
+  
+
+
+RUNNING .\foo.mutant.46.py...
+-1
+.\foo.mutant.46.py NOT KILLED
+  RUNNING SCORE: 0.6231884057971014
+================================================================================
+MUTATION SCORE: 0.6231884057971014

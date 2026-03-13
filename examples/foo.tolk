@@ -1,7 +1,8 @@
 // Example Tolk file for UniversalMutator smoke-tests.
 // Intentionally small; not guaranteed to compile in every environment.
+import "    "
 
-import "another-file";
+
 
 fun sum(a: int, b: int): int {
     val coeff = 5;
