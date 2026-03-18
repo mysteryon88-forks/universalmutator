@@ -53,6 +53,8 @@ def checkCombyDeadCode(deadCodeLines, mutant):
     return True
 
 def cmdHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
+    backupName = None
+    outFile = ".um.mutant_output." + str(os.getpid())
     if "MUTANT" not in cmd:
         # We asssume if the MUTANT isn't part of the command,
         # we need to move it into place, before, e.g., make
@@ -60,7 +62,7 @@ def cmdHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
         shutil.copy(sourceFile, backupName)
         shutil.copy(tmpMutantName, sourceFile)
     try:
-        with open(".um.mutant_output." + str(os.getpid()), 'w') as file:
+        with open(outFile, 'w') as file:
             r = subprocess.call(cmd.replace("MUTANT", tmpMutantName),
                                 shell=True, stderr=file, stdout=file)
         if r == 0:
@@ -70,6 +72,14 @@ def cmdHandler(tmpMutantName, mutant, sourceFile, uniqueMutants):
         # If we moved the mutant in, restore original
         if "MUTANT" not in cmd:
             shutil.copy(backupName, sourceFile)
+        try:
+            os.remove(backupName)
+        except OSError:
+            pass
+        try:
+            os.remove(outFile)
+        except OSError:
+            pass
 
 
 def toGarbage(code):
@@ -346,7 +356,7 @@ def main():
         pass
 
     sourceFile = args[1]
-    base = (".".join((sourceFile.split(".")[:-1]))).split("/")[-1]
+    base = os.path.splitext(os.path.basename(sourceFile))[0]
     ending = "." + sourceFile.split(".")[-1]
 
     if "--only" not in args:

@@ -1,4 +1,8 @@
 # Tolk (TON) comby rules.
+#
+# Notes:
+# - universal.rules already provides most operator/number mutations.
+# - These rules mirror conservative Tolk-specific surface-syntax edits.
 
 //:[comment] ==> DO_NOT_MUTATE
 
@@ -8,3 +12,18 @@ true ==> false
 false ==> true
 
 val :[rest] ==> var :[rest]
+:[lhs] is :[rhs] ==> :[lhs] !is :[rhs]
+:[lhs] !is :[rhs] ==> :[lhs] is :[rhs]
+
+lazy :[rest] ==> :[rest]
+get fun :[rest] ==> fun :[rest]
+mutate self ==> self
+
+BounceMode.NoBounce ==> BounceMode.RichBounce
+BounceMode.Only256BitsOfBody ==> BounceMode.RichBounce
+BounceMode.RichBounceOnlyRootCell ==> BounceMode.RichBounce
+
+InMessageBounced ==> InMessage
+
+struct (:[opcode]) :[name] { ==> struct (0x00000000) :[name] {
+struct (:[opcode]) :[name] { ==> struct (0xFFFFFFFF) :[name] {

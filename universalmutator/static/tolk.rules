@@ -1,4 +1,8 @@
 # Tolk (TON) rules.
+#
+# Notes:
+# - universal.rules already provides most operator/number mutations.
+# - Here we keep Tolk-specific mutations anchored to documented syntax.
 
 ^\s*import\s ==> DO_NOT_MUTATE
 
@@ -10,3 +14,30 @@ false ==> true
 
 # Make immutables mutable (likely still compiles).
 \bval\b ==> var
+
+# Tolk unions support `is` / `!is` runtime checks.
+(?<![!\w])is\b ==> !is
+(?<!\w)!is\b ==> is
+
+# Drop lazy loading and force eager evaluation.
+(^|\s)lazy(\s+) ==> \1
+
+# Remove getter exposure while keeping the function body.
+\bget\s+fun\b ==> fun
+
+# Strip mutability from instance receivers.
+\bmutate\s+self\b ==> self
+
+# Flip documented bounce modes used when sending messages.
+\bBounceMode\.NoBounce\b ==> BounceMode.RichBounce
+\bBounceMode\.RichBounce\b ==> BounceMode.NoBounce
+\bBounceMode\.Only256BitsOfBody\b ==> BounceMode.RichBounce
+\bBounceMode\.RichBounceOnlyRootCell\b ==> BounceMode.RichBounce
+
+# Swap documented bounced/internal message wrapper types.
+\bInMessageBounced\b ==> InMessage
+\bInMessage\b ==> InMessageBounced
+
+# Mutate 32-bit message opcodes/prefixes declared on struct headers.
+(^\s*struct\s+\()0x[0-9A-Fa-f]{8}(\)\s+[A-Za-z_]\w*) ==> \g<1>0x00000000\2
+(^\s*struct\s+\()0x[0-9A-Fa-f]{8}(\)\s+[A-Za-z_]\w*) ==> \g<1>0xFFFFFFFF\2
