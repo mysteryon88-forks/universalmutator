@@ -45,17 +45,18 @@ class TestTempFileCleanup(TestCase):
                     with open(mutant_file, "w") as f:
                         f.write(mutant_text)
 
+                    artifact_prefixes = tuple(item[0] for item in extra_outputs)
+
                     def fake_call(
                         command,
                         shell=False,
                         cwd=None,
                         stderr=None,
                         stdout=None,
-                        artifact_prefixes=tuple(prefix for prefix, _ in extra_outputs),
                     ):
-                        for prefix in artifact_prefixes:
+                        for artifact_prefix in artifact_prefixes:
                             for token in str(command).split():
-                                if prefix in token:
+                                if artifact_prefix in token:
                                     artifact = token.strip('"')
                                     with open(artifact, "w") as artifact_file:
                                         artifact_file.write("artifact\n")
