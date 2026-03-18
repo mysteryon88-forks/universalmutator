@@ -53,6 +53,7 @@ class TestTempFileCleanup(TestCase):
                         cwd=None,
                         stderr=None,
                         stdout=None,
+                        artifact_prefixes=artifact_prefixes,
                     ):
                         for artifact_prefix in artifact_prefixes:
                             for token in str(command).split():
