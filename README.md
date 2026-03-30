@@ -71,7 +71,7 @@ Tolk
 Tact
 ```
 
-(the last three are smart contract languages for the Ethereum blockchain).
+(the last six are smart contract languages: Solidity/Vyper/Fe for Ethereum and FunC/Tolk/Tact for TON).
 
 All but C, C++, JavaScript, and Go will try, by default, to compile the mutated
 file and use TCE to detect redundancy. Of course, build dependencies
