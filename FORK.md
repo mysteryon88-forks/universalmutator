@@ -110,6 +110,11 @@ func-js -h
 - В regex-режиме мутатор пропускает пустые строки и блок-комментарии `/* ... */` и `{- ... -}` для всех языков, чтобы не мутировать комментарии и не раздувать шум.
 - Для FunC добавлен быстрый фильтр в regex-режиме: если строка содержит `store_uint` или `store_int` и выражение с длинной суммой чисел (5+ числовых литералов), то числовые мутации из `universal.rules` вида `(\D)(\d+)(\D)` пропускаются. Это ускоряет генерацию и уменьшает пачку `INVALID` на выражениях длины битов. Фильтр включается только при наличии `func.rules` и не влияет на другие языки или `--comby`.
 
+## Изменения генератора (genmutants.py)
+
+- При `--swap` строки для перестановки теперь исключают пустые строки и строки-комментарии (`//`, `;;`, `#`), а также строки внутри блок-комментариев `/* ... */` и `{- ... -}`. Это делает свапы более осмысленными и уменьшает число мусорных `INVALID`.
+- Также `--swap` не переставляет одинаковые строки (включая случаи, когда совпадает содержимое после `strip()`), чтобы не генерировать бессмысленные мутанты вроде перестановки `}` с `}`.
+
 Удобно заранее создать каталоги:
 
 ```sh
@@ -257,4 +262,13 @@ npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts
 mutate examples/tolk-bench/contracts_FunC/01_jetton/jetton-wallet.fc func --mutantDir tmp/func-jetton-wallet-mutants
 
 analyze_mutants examples/tolk-bench/contracts_FunC/01_jetton/jetton-wallet.fc "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/func-jetton-wallet-mutants --timeout 180
+```
+
+## Тестирование примера
+
+```sh
+mutate examples/foo.fc func --mutantDir tmp/foo --swap
+mutate examples/foo.sol solidity --mutantDir tmp/solid --swap
+
+
 ```

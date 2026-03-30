@@ -3,6 +3,12 @@
 
 pragma solidity ^0.8.20;
 
+/*
+
+wer
+
+ */
+
 contract SimpleCounter {
     // Stored counter value.
     uint256 public value;

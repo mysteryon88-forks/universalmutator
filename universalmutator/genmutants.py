@@ -546,13 +546,43 @@ def main():
     if doSwaps:
         print("TRYING CODE SWAPS...")
         swapList = []
+        inBlockComment = False
+        inFuncBlockComment = False
         for lineNo in range(len(source)):
             if lineNo + 1 in deadCodeLines:
+                continue
+            line = source[lineNo]
+            stripped = line.strip()
+            if stripped == "":
+                continue
+            if inBlockComment:
+                if "*/" in line:
+                    inBlockComment = False
+                continue
+            if inFuncBlockComment:
+                if "-}" in line:
+                    inFuncBlockComment = False
+                continue
+            if "/*" in line:
+                if "*/" not in line or line.index("/*") > line.index("*/"):
+                    inBlockComment = True
+                if stripped.startswith("/*"):
+                    continue
+            if "{-" in line:
+                if "-}" not in line or line.index("{-") > line.index("-}"):
+                    inFuncBlockComment = True
+                if stripped.startswith("{-"):
+                    continue
+            if stripped.startswith("//") or stripped.startswith(";;") or stripped.startswith("#"):
                 continue
             swapList.append(lineNo)
         for i in range(0, len(swapList)-1):
             a = swapList[i]
             b = swapList[i+1]
+            if source[a] == source[b]:
+                continue
+            if source[a].strip() == source[b].strip():
+                continue
             mutant = [a + 1] # Only the line is valid here
             print("TRYING TO SWAP LINES", a + 1, "AND", b + 1, end="...")
             newSource = source[:a]
