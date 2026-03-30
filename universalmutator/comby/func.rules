@@ -12,6 +12,8 @@ throw_arg_unless(:[arg], :[err], :[cond]) ==> throw_arg_if(:[arg], :[err], :[con
 
 inline_ref ==> inline
 inline ==> inline_ref
+inline_ref ==> 
+inline ==> 
 impure ==> 
 method_id(:[id]) ==> method_id(0)
 method_id ==> method_id(0)

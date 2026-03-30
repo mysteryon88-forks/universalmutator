@@ -97,7 +97,9 @@ class TestFuncRules(TestCase):
         mutant_lines = {mutant[1].rstrip() for mutant in mutants}
 
         self.assertIn("int inlineFn(int a) inline_ref {", mutant_lines)
+        self.assertIn("int inlineFn(int a)  {", mutant_lines)
         self.assertIn("int refFn(int a) inline {", mutant_lines)
+        self.assertIn("int refFn(int a)  {", mutant_lines)
         self.assertIn("int impureFn()  {", mutant_lines)
         self.assertIn("int get_counter() method_id(0) {", mutant_lines)
         self.assertIn("int get_counter2() method_id(0) {", mutant_lines)

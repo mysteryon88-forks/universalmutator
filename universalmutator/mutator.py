@@ -134,6 +134,8 @@ def mutants_regexp(source, ruleFiles=None, mutateTestCode=False, mutateBoth=Fals
     print("MUTATING WITH RULES:", ", ".join(ruleFiles))
 
     (rules, ignoreRules, skipRules) = parseRules(ruleFiles)
+    func_ruleset = any(os.path.basename(rule) == "func.rules" for rule in ruleFiles)
+    numeric_literal_pattern = r"(\D)(\d+)(\D)"
 
     for p in ignorePatterns:
         try:
@@ -198,8 +200,18 @@ def mutants_regexp(source, ruleFiles=None, mutateTestCode=False, mutateBoth=Fals
                 break
         if skipLine:
             continue
+        skipDenseNumericRules = False
+        if func_ruleset and ("store_uint" in l or "store_int" in l):
+            if re.search(r"\d\s*[+-]\s*\d", l):
+                numeric_literals = re.findall(r"(?<![A-Za-z_])\d+(?![A-Za-z_])", l)
+                if len(numeric_literals) >= 5:
+                    # FunC часто вычисляет битовую длину как длинную сумму.
+                    # Мутации отдельных чисел здесь дают много INVALID и замедляют прогон.
+                    skipDenseNumericRules = True
         abandon = False
         for ((lhs, rhs), ruleUsed) in rules:
+            if skipDenseNumericRules and lhs.pattern == numeric_literal_pattern:
+                continue
             skipPos = len(l)
             for skipRule in skipRules:
                 skipp = skipRule.search(l, 0)

@@ -12,6 +12,8 @@ throw_arg_unless ==> throw_arg_if
 # Mutate documented function specifiers.
 \binline_ref\b ==> inline
 \binline\b ==> inline_ref
+\binline_ref\b ==> 
+\binline\b ==> 
 \bimpure\b ==> 
 \bmethod_id\s*\(\s*[^)\n]+\s*\) ==> method_id(0)
 \bmethod_id\b(?!\s*\() ==> method_id(0)
