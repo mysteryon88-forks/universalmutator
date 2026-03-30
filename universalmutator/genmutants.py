@@ -546,42 +546,48 @@ def main():
     if doSwaps:
         print("TRYING CODE SWAPS...")
         swapList = []
+        def swap_candidate(line, inBlockComment, inFuncBlockComment):
+            stripped = line.strip()
+            if stripped == "":
+                return False, inBlockComment, inFuncBlockComment
+            if inBlockComment:
+                if "*/" in line:
+                    inBlockComment = False
+                return False, inBlockComment, inFuncBlockComment
+            if inFuncBlockComment:
+                if "-}" in line:
+                    inFuncBlockComment = False
+                return False, inBlockComment, inFuncBlockComment
+            if "/*" in line:
+                if "*/" not in line or line.index("/*") > line.index("*/"):
+                    inBlockComment = True
+                if stripped.startswith("/*"):
+                    return False, inBlockComment, inFuncBlockComment
+            if "{-" in line:
+                if "-}" not in line or line.index("{-") > line.index("-}"):
+                    inFuncBlockComment = True
+                if stripped.startswith("{-"):
+                    return False, inBlockComment, inFuncBlockComment
+            if stripped.startswith("//") or stripped.startswith(";;") or stripped.startswith("#"):
+                return False, inBlockComment, inFuncBlockComment
+            return True, inBlockComment, inFuncBlockComment
+
+        def swap_equivalent(lineA, lineB):
+            return lineA.strip() == lineB.strip()
+
         inBlockComment = False
         inFuncBlockComment = False
         for lineNo in range(len(source)):
             if lineNo + 1 in deadCodeLines:
                 continue
             line = source[lineNo]
-            stripped = line.strip()
-            if stripped == "":
-                continue
-            if inBlockComment:
-                if "*/" in line:
-                    inBlockComment = False
-                continue
-            if inFuncBlockComment:
-                if "-}" in line:
-                    inFuncBlockComment = False
-                continue
-            if "/*" in line:
-                if "*/" not in line or line.index("/*") > line.index("*/"):
-                    inBlockComment = True
-                if stripped.startswith("/*"):
-                    continue
-            if "{-" in line:
-                if "-}" not in line or line.index("{-") > line.index("-}"):
-                    inFuncBlockComment = True
-                if stripped.startswith("{-"):
-                    continue
-            if stripped.startswith("//") or stripped.startswith(";;") or stripped.startswith("#"):
-                continue
-            swapList.append(lineNo)
+            ok, inBlockComment, inFuncBlockComment = swap_candidate(line, inBlockComment, inFuncBlockComment)
+            if ok:
+                swapList.append(lineNo)
         for i in range(0, len(swapList)-1):
             a = swapList[i]
             b = swapList[i+1]
-            if source[a] == source[b]:
-                continue
-            if source[a].strip() == source[b].strip():
+            if swap_equivalent(source[a], source[b]):
                 continue
             mutant = [a + 1] # Only the line is valid here
             print("TRYING TO SWAP LINES", a + 1, "AND", b + 1, end="...")
