@@ -161,17 +161,7 @@ mutate examples/foo.fc func --cmd "my-func-compiler check examples/foo.fc" --mut
 
 Если кастомная команда не является настоящей compile-check командой и может возвращать `0` даже для синтаксически сломанного кода, добавь `--noFastCheck`.
 
-## Тестирую Jetton
-
-```sh
-npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts
-
-mutate examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk --mutantDir tmp/tolk-jetton-wallet-mutants
-
-analyze_mutants examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/tolk-jetton-wallet-mutants --timeout 180
-```
-
-Ниже — быстрый чек-лист, чтобы руками прогнать все утилиты и понять, что именно они делают.
+## Команды
 
 ### `mutate`
 
@@ -237,4 +227,28 @@ intersect_mutants tmp/covered_mutants.txt tmp/prioritized.txt tmp/intersection.t
 
 ```sh
 intersect_mutants tmp/all_mutants.txt tmp/prioritized.txt tmp/intersection.txt
+```
+
+## Тестирую Jetton (Tolk)
+
+```sh
+npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts
+
+mutate examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk --mutantDir tmp/tolk-jetton-wallet-mutants
+
+analyze_mutants examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/tolk-jetton-wallet-mutants --timeout 180
+```
+
+## Тестирую Jetton (FunC)
+
+Перед запуском переключи wrapper на FunC:
+`examples/tolk-bench/wrappers/01_jetton/JettonWallet.compile.ts`
+должен быть с `lang: 'func'` и списком `targets` для `.fc` файлов.
+
+```sh
+npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts
+
+mutate examples/tolk-bench/contracts_FunC/01_jetton/jetton-wallet.fc func --mutantDir tmp/func-jetton-wallet-mutants
+
+analyze_mutants examples/tolk-bench/contracts_FunC/01_jetton/jetton-wallet.fc "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/func-jetton-wallet-mutants --timeout 180
 ```

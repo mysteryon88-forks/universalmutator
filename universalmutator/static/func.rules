@@ -6,7 +6,104 @@
 
 throw_if ==> throw_unless
 throw_unless ==> throw_if
+throw_arg_if ==> throw_arg_unless
+throw_arg_unless ==> throw_arg_if
 
-# Some codebases use upper-cased macros.
-THROW_IF ==> THROW_UNLESS
-THROW_UNLESS ==> THROW_IF
+# Mutate documented function specifiers.
+\binline_ref\b ==> inline
+\binline\b ==> inline_ref
+\bimpure\b ==> 
+\bmethod_id\s*\(\s*[^)\n]+\s*\) ==> method_id(0)
+\bmethod_id\b(?!\s*\() ==> method_id(0)
+
+# Mutate documented time/random helpers.
+\bnow\s*\( ==> cur_lt(
+\bcur_lt\s*\( ==> block_lt(
+\bblock_lt\s*\( ==> cur_lt(
+\brandom\s*\( ==> get_seed(
+\bget_seed\s*\( ==> random(
+
+# Mutate documented slice/cell load helpers.
+\bload_ref\s*\( ==> preload_ref(
+\bpreload_ref\s*\( ==> load_ref(
+\bload_dict\s*\( ==> preload_dict(
+\bpreload_dict\s*\( ==> load_dict(
+\bload_maybe_ref\s*\( ==> preload_maybe_ref(
+\bpreload_maybe_ref\s*\( ==> load_maybe_ref(
+\bload_int\s*\( ==> preload_int(
+\bpreload_int\s*\( ==> load_int(
+\bload_uint\s*\( ==> preload_uint(
+\bpreload_uint\s*\( ==> load_uint(
+\bload_bits\s*\( ==> preload_bits(
+\bpreload_bits\s*\( ==> load_bits(
+
+# Mutate documented integer load/store helpers.
+\bload_uint\b ==> load_int
+\bload_int\b ==> load_uint
+\bstore_uint\b ==> store_int
+\bstore_int\b ==> store_uint
+
+# Swap modifying vs non-modifying call notation for numeric built-ins.
+(\b[A-Za-z_]\w*)\.load_int\s*\( ==> \1~load_int(
+(\b[A-Za-z_]\w*)~load_int\s*\( ==> \1.load_int(
+(\b[A-Za-z_]\w*)\.load_uint\s*\( ==> \1~load_uint(
+(\b[A-Za-z_]\w*)~load_uint\s*\( ==> \1.load_uint(
+(\b[A-Za-z_]\w*)\.load_bits\s*\( ==> \1~load_bits(
+(\b[A-Za-z_]\w*)~load_bits\s*\( ==> \1.load_bits(
+(\b[A-Za-z_]\w*)\.store_int\s*\( ==> \1~store_int(
+(\b[A-Za-z_]\w*)~store_int\s*\( ==> \1.store_int(
+(\b[A-Za-z_]\w*)\.store_uint\s*\( ==> \1~store_uint(
+(\b[A-Za-z_]\w*)~store_uint\s*\( ==> \1.store_uint(
+
+# Mutate documented slice/builder inspection helpers.
+\bslice_refs\s*\( ==> slice_bits(
+\bslice_bits\s*\( ==> slice_refs(
+\bbuilder_refs\s*\( ==> builder_bits(
+\bbuilder_bits\s*\( ==> builder_refs(
+\bslice_empty\?\s*\( ==> slice_refs_empty?(
+\bslice_refs_empty\?\s*\( ==> slice_empty?(
+
+# Swap signed/unsigned dictionary helpers.
+\bidict_([A-Za-z0-9_]+\??)(?=[^A-Za-z0-9_]|$) ==> udict_\1
+\budict_([A-Za-z0-9_]+\??)(?=[^A-Za-z0-9_]|$) ==> idict_\1
+
+# Swap closely related built-ins with non-symbolic names.
+\bdivmod\b ==> moddiv
+\bmoddiv\b ==> divmod
+(?<![A-Za-z0-9_])~divmod\b ==> ~moddiv
+(?<![A-Za-z0-9_])~moddiv\b ==> ~divmod
+\bmuldiv\b ==> muldivr
+\bmuldivr\b ==> muldivc
+\bmuldivc\b ==> muldiv
+\bmuldivmod\b ==> divmod
+\bint_at\s*\( ==> cell_at(
+\bcell_at\s*\( ==> slice_at(
+\bslice_at\s*\( ==> tuple_at(
+\btuple_at\s*\( ==> int_at(
+\bat\s*\( ==> tuple_at(
+
+# Mutate numeric send/reserve mode literals when passed directly to stdlib helpers.
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b0\b([^;\n]*\)) ==> \g<1>1\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b1\b([^;\n]*\)) ==> \g<1>0\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b2\b([^;\n]*\)) ==> \g<1>0\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b16\b([^;\n]*\)) ==> \g<1>0\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b32\b([^;\n]*\)) ==> \g<1>0\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b64\b([^;\n]*\)) ==> \g<1>128\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b128\b([^;\n]*\)) ==> \g<1>64\2
+(\bsend_raw_message\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b1024\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b0\b([^;\n]*\)) ==> \g<1>1\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b1\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b2\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b16\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b32\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b64\b([^;\n]*\)) ==> \g<1>128\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b128\b([^;\n]*\)) ==> \g<1>64\2
+(\braw_reserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b1024\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b0\b([^;\n]*\)) ==> \g<1>1\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b1\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b2\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b16\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b32\b([^;\n]*\)) ==> \g<1>0\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b64\b([^;\n]*\)) ==> \g<1>128\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b128\b([^;\n]*\)) ==> \g<1>64\2
+(\braw_reserve_extra\s*\(\s*[^,;\n]+,\s*[^,;\n]+,\s*[^;\n]*?)\b1024\b([^;\n]*\)) ==> \g<1>0\2

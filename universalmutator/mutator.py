@@ -150,6 +150,8 @@ def mutants_regexp(source, ruleFiles=None, mutateTestCode=False, mutateBoth=Fals
     lineno = 0
     stringSkipped = 0
     inTestCode = False
+    inBlockComment = False
+    inFuncBlockComment = False
     targetLine = None
     if fuzzing:
         # Pick a random target line, ignore others
@@ -159,6 +161,24 @@ def mutants_regexp(source, ruleFiles=None, mutateTestCode=False, mutateBoth=Fals
     for l in source:
         lineno += 1
         if fuzzing and (lineno != targetLine):
+            continue
+        if l.strip() == "":
+            continue
+        if inBlockComment:
+            if "*/" in l:
+                inBlockComment = False
+            continue
+        if inFuncBlockComment:
+            if "-}" in l:
+                inFuncBlockComment = False
+            continue
+        if "/*" in l:
+            if "*/" not in l or l.index("/*") > l.index("*/"):
+                inBlockComment = True
+            continue
+        if "{-" in l:
+            if "-}" not in l or l.index("{-") > l.index("-}"):
+                inFuncBlockComment = True
             continue
         if inTestCode:
             if "@END_TEST_CODE" in l:

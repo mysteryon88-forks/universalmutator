@@ -1,8 +1,74 @@
 # FunC (TON) comby rules.
 
 ;;:[comment] ==> DO_NOT_MUTATE
+{-:[comment]-} ==> DO_NOT_MUTATE
 
 #include :[rest] ==> DO_NOT_MUTATE
 
 throw_if(:[x]) ==> throw_unless(:[x])
 throw_unless(:[x]) ==> throw_if(:[x])
+throw_arg_if(:[arg], :[err], :[cond]) ==> throw_arg_unless(:[arg], :[err], :[cond])
+throw_arg_unless(:[arg], :[err], :[cond]) ==> throw_arg_if(:[arg], :[err], :[cond])
+
+inline_ref ==> inline
+inline ==> inline_ref
+impure ==> 
+method_id(:[id]) ==> method_id(0)
+method_id ==> method_id(0)
+
+now() ==> cur_lt()
+cur_lt() ==> block_lt()
+block_lt() ==> cur_lt()
+
+random() ==> get_seed()
+get_seed() ==> random()
+
+load_ref(:[s]) ==> preload_ref(:[s])
+preload_ref(:[s]) ==> load_ref(:[s])
+load_dict(:[s]) ==> preload_dict(:[s])
+preload_dict(:[s]) ==> load_dict(:[s])
+load_maybe_ref(:[s]) ==> preload_maybe_ref(:[s])
+preload_maybe_ref(:[s]) ==> load_maybe_ref(:[s])
+load_int(:[s], :[len]) ==> preload_int(:[s], :[len])
+preload_int(:[s], :[len]) ==> load_int(:[s], :[len])
+load_uint(:[s], :[len]) ==> preload_uint(:[s], :[len])
+preload_uint(:[s], :[len]) ==> load_uint(:[s], :[len])
+load_bits(:[s], :[len]) ==> preload_bits(:[s], :[len])
+preload_bits(:[s], :[len]) ==> load_bits(:[s], :[len])
+
+:[s]~load_uint(:[len]) ==> :[s]~load_int(:[len])
+:[s]~load_int(:[len]) ==> :[s]~load_uint(:[len])
+:[b].store_uint(:[x], :[len]) ==> :[b].store_int(:[x], :[len])
+:[b].store_int(:[x], :[len]) ==> :[b].store_uint(:[x], :[len])
+
+:[s].load_int(:[len]) ==> :[s]~load_int(:[len])
+:[s]~load_int(:[len]) ==> :[s].load_int(:[len])
+:[s].load_uint(:[len]) ==> :[s]~load_uint(:[len])
+:[s]~load_uint(:[len]) ==> :[s].load_uint(:[len])
+:[s].load_bits(:[len]) ==> :[s]~load_bits(:[len])
+:[s]~load_bits(:[len]) ==> :[s].load_bits(:[len])
+:[b].store_int(:[x], :[len]) ==> :[b]~store_int(:[x], :[len])
+:[b]~store_int(:[x], :[len]) ==> :[b].store_int(:[x], :[len])
+:[b].store_uint(:[x], :[len]) ==> :[b]~store_uint(:[x], :[len])
+:[b]~store_uint(:[x], :[len]) ==> :[b].store_uint(:[x], :[len])
+
+slice_refs(:[s]) ==> slice_bits(:[s])
+slice_bits(:[s]) ==> slice_refs(:[s])
+builder_refs(:[b]) ==> builder_bits(:[b])
+builder_bits(:[b]) ==> builder_refs(:[b])
+slice_empty?(:[s]) ==> slice_refs_empty?(:[s])
+slice_refs_empty?(:[s]) ==> slice_empty?(:[s])
+
+divmod(:[a], :[b]) ==> moddiv(:[a], :[b])
+moddiv(:[a], :[b]) ==> divmod(:[a], :[b])
+:[a]~divmod(:[b]) ==> :[a]~moddiv(:[b])
+:[a]~moddiv(:[b]) ==> :[a]~divmod(:[b])
+muldiv(:[a], :[b], :[c]) ==> muldivr(:[a], :[b], :[c])
+muldivr(:[a], :[b], :[c]) ==> muldivc(:[a], :[b], :[c])
+muldivc(:[a], :[b], :[c]) ==> muldiv(:[a], :[b], :[c])
+muldivmod(:[a], :[b], :[c]) ==> divmod(:[a], :[b])
+int_at(:[t], :[i]) ==> cell_at(:[t], :[i])
+cell_at(:[t], :[i]) ==> slice_at(:[t], :[i])
+slice_at(:[t], :[i]) ==> tuple_at(:[t], :[i])
+tuple_at(:[t], :[i]) ==> int_at(:[t], :[i])
+at(:[t], :[i]) ==> tuple_at(:[t], :[i])
