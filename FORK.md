@@ -6,21 +6,6 @@
 - `func` для файлов `.fc` и `.func`
 - `tolk` для файлов `.tolk`
 
-В форке добавлены:
-
-- handlers:
-  - `universalmutator/tact_handler.py`
-  - `universalmutator/func_handler.py`
-  - `universalmutator/tolk_handler.py`
-- правила мутаций:
-  - `universalmutator/static/tact.rules`
-  - `universalmutator/static/func.rules`
-  - `universalmutator/static/tolk.rules`
-  - `universalmutator/comby/tact.rules`
-  - `universalmutator/comby/func.rules`
-  - `universalmutator/comby/tolk.rules`
-- выбор языка по расширению файла, чтобы `mutate file.tact tact` работало так же, как и для других языков
-
 ## Как запускать именно этот форк
 
 У пакета уже есть `console_scripts` в `setup.py`. После установки форка доступны такие команды:
@@ -109,48 +94,6 @@ npm i -g @ton-community/func-js
 func-js -h
 ```
 
-## Быстрая проверка окружения
-
-PowerShell:
-
-```sh
-python --version
-node --version
-npm --version
-mutate --help
-tact --version
-npx -y @ton/tolk-js --help
-npx -y @ton-community/func-js -h
-```
-
-## Валидация одиночных файлов
-
-### Tact
-
-Для compile-check лучше использовать `--check`.
-
-```sh
-tact --check examples/foo.tact *> tmp/compile_logs/tact_foo.log
-```
-
-### Tolk
-
-```sh
-npx -y @ton/tolk-js --output-json tmp/tolk-out.json examples/foo.tolk *> tmp/compile_logs/tolk_foo.log
-```
-
-### FunC
-
-```sh
-npx -y @ton-community/func-js --cwd examples foo.fc --fift tmp/func-out.fif *> tmp/compile_logs/func_foo.log
-```
-
-Важный нюанс по FunC:
-
-- `@ton-community/func-js` делает полноценную компиляцию
-- даже если просишь только `--fift`, компилятор все равно требует `main`
-- если в проекте есть `#include`, лучше задавать `--cwd` и передавать имя файла относительно этого каталога
-
 ## Генерация мутантов
 
 Смысл такой:
@@ -218,76 +161,80 @@ mutate examples/foo.fc func --cmd "my-func-compiler check examples/foo.fc" --mut
 
 Если кастомная команда не является настоящей compile-check командой и может возвращать `0` даже для синтаксически сломанного кода, добавь `--noFastCheck`.
 
-## Полезные артефакты компиляции
-
-### Tact
-
-Для compile-check:
-
-- достаточно `tact --check ...`
-- handler смотрит только на `exit code`
-
-Для полноценной сборки контракта:
+## Тестирую Jetton
 
 ```sh
-tact path/to/contract.tact --output out
+npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts
+
+mutate examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk --mutantDir tmp/tolk-jetton-wallet-mutants
+
+analyze_mutants examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/tolk-jetton-wallet-mutants --timeout 180
 ```
 
-Обычно появляются артефакты:
+Ниже — быстрый чек-лист, чтобы руками прогнать все утилиты и понять, что именно они делают.
 
-- `.pkg`
-- `.code.boc`
-- `.fc`
-- `.fif`
-- `.abi`
-- `.ts`
-- `.md`
+### `mutate`
 
-### Tolk
-
-Самый удобный артефакт:
+Генерирует мутантов и кладёт их в `--mutantDir`. При необходимости можно добавить `--cmd` или `--noFastCheck`.
 
 ```sh
-npx -y @ton/tolk-js --output-json tmp/tolk-out.json examples/foo.tolk
+mutate examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk --mutantDir tmp/tolk-jetton-wallet-mutants
 ```
 
-В JSON есть:
+### `analyze_mutants`
 
-- `artifactVersion`
-- `tolkVersion`
-- `fiftCode`
-- `codeBoc64`
-- `codeHashHex`
-- `sourcesSnapshot`
-
-### FunC
-
-Только Fift:
+Прогоняет тесты на каждом мутанте. Создаёт `killed.txt` и `notkilled.txt` в текущей директории.
 
 ```sh
-npx -y @ton-community/func-js --cwd examples foo.fc --fift tmp/func-out.fif
+analyze_mutants examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/tolk-jetton-wallet-mutants --timeout 180
 ```
 
-JSON artifact:
+Полезные флаги: `--show`, `--verbose`, `--resume`, `--noShuffle`, `--numMutants N`, `--prefix name`.
+
+### `check_covered`
+
+Фильтрует мутантов по покрытым строкам. Формат `coverfile` — список номеров строк (по одному номеру на строку). Для TSTL-отчётов есть `--tstl`.
 
 ```sh
-npx -y @ton-community/func-js --cwd examples foo.fc --artifact tmp/func-out.json
+check_covered examples/tolk-bench/contracts_Tolk/01_jetton/jetton-wallet-contract.tolk tmp/covered_lines.txt tmp/covered_mutants.txt --mutantDir tmp/tolk-jetton-wallet-mutants
 ```
 
-В JSON есть:
+### `prioritize_mutants`
 
-- `artifactVersion`
-- `version`
-- `sources`
-- `codeBoc`
-- `fiftCode`
-
-Если нужен бинарный BOC:
+Ранжирует список мутантов по структурной дистанции. На вход принимает файл со списком имён мутантов.
 
 ```sh
-npx -y @ton-community/func-js --cwd examples foo.fc --boc tmp/func-out.cell --fift tmp/func-out.fif
+prioritize_mutants tmp/covered_mutants.txt tmp/prioritized.txt --mutantDir tmp/tolk-jetton-wallet-mutants --sourceDir examples/tolk-bench/contracts_Tolk/01_jetton
 ```
 
-## Recheck
+### `show_mutants`
 
-Пошаговый сценарий повторной локальной проверки вынесен в `RECHECK.md`.
+Показывает диффы для мутантов из списка.
+
+```sh
+show_mutants tmp/prioritized.txt --mutantDir tmp/tolk-jetton-wallet-mutants --sourceDir examples/tolk-bench/contracts_Tolk/01_jetton
+```
+
+Флаг `--concise` делает вывод компактным.
+
+### `prune_mutants`
+
+Фильтрует список мутантов по правилам из конфигурации. Формат правил — строки вида `field: value`, доступны `orig`, `mutant`, `change`, `source`, `line` и их варианты с `!` или `_RE`.
+
+```sh
+prune_mutants tmp/prioritized.txt tmp/pruned.txt tmp/prune.cfg --mutantDir tmp/tolk-jetton-wallet-mutants --sourceDir examples/tolk-bench/contracts_Tolk/01_jetton
+```
+
+### `intersect_mutants`
+
+Берёт пересечение двух списков мутантов.
+
+```sh
+intersect_mutants tmp/covered_mutants.txt tmp/prioritized.txt tmp/intersection.txt
+```
+
+Для smoke-теста можно пересекать любые два существующих списка, например:
+
+```sh
+intersect_mutants tmp/all_mutants.txt tmp/prioritized.txt tmp/intersection.txt
+```

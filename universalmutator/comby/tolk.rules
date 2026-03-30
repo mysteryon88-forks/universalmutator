@@ -10,20 +10,64 @@ import :[rest] ==> DO_NOT_MUTATE
 
 true ==> false
 false ==> true
-
-val :[rest] ==> var :[rest]
 :[lhs] is :[rhs] ==> :[lhs] !is :[rhs]
 :[lhs] !is :[rhs] ==> :[lhs] is :[rhs]
 
 lazy :[rest] ==> :[rest]
 get fun :[rest] ==> fun :[rest]
+@inline ==> @noinline
+@noinline ==> @inline
+@inline_ref ==> @inline
+@pure ==> 
+@method_id(:[id]) ==> @method_id(0)
 mutate self ==> self
+mutate :[param]: :[type] ==> :[param]: :[type]
+fun :[name](:[before], :[arg]: :[type] = :[default], :[after]) ==> fun :[name](:[before], :[arg]: :[type], :[after])
+fun :[name](:[arg]: :[type] = :[default], :[after]) ==> fun :[name](:[arg]: :[type], :[after])
+fun :[name](:[before], :[arg]: :[type] = :[default]) ==> fun :[name](:[before], :[arg]: :[type])
+
+uint:[n] ==> int:[n]
+int:[n] ==> uint:[n]
+varuint16 ==> varint16
+varint16 ==> varuint16
+varuint32 ==> varint32
+varint32 ==> varuint32
+as uint:[n] ==> as int:[n]
+as int:[n] ==> as uint:[n]
+assert (:[cond]) throw :[err] ==> if (:[cond]) throw :[err]
+:[expr]! ==> :[expr]
+throwIfOpcodeDoesNotMatch: :[err] ==> throwIfOpcodeDoesNotMatch: 63
+blockchain.now ==> blockchain.logicalTime
+blockchain.logicalTime ==> blockchain.currentBlockLogicalTime
+blockchain.currentBlockLogicalTime ==> blockchain.logicalTime
+calculateSizeStrict ==> calculateSize
+calculateSize ==> calculateSizeStrict
+calculateForwardFeeWithoutLumpPrice ==> calculateForwardFee
+calculateForwardFee ==> calculateForwardFeeWithoutLumpPrice
+calculateGasFeeWithoutFlatPrice ==> calculateGasFee
+calculateGasFee ==> calculateGasFeeWithoutFlatPrice
+acceptExternalMessage ==> commitContractDataAndActions
+commitContractDataAndActions ==> acceptExternalMessage
+random.uint256 ==> random.getSeed
+random.getSeed ==> random.uint256
+stringCrc32(:[s]) ==> stringCrc16(:[s])
+stringCrc16(:[s]) ==> stringCrc32(:[s])
+stringSha256_32(:[s]) ==> stringSha256(:[s])
+stringSha256(:[s]) ==> stringSha256_32(:[s])
+StringBuilder.create().append(:[a]).append(:[b]).build() ==> StringBuilder.create().append(:[b]).append(:[a]).build()
+SEND_MODE_IGNORE_ERRORS ==> 0
+SEND_MODE_PAY_FEES_SEPARATELY ==> 0
+SEND_MODE_BOUNCE_ON_ACTION_FAIL ==> 0
+SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> SEND_MODE_CARRY_ALL_BALANCE
+SEND_MODE_CARRY_ALL_BALANCE ==> SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE
+SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> 0
+SEND_MODE_CARRY_ALL_BALANCE ==> 0
+RESERVE_MODE_AT_MOST ==> RESERVE_MODE_EXACT_AMOUNT
+RESERVE_MODE_EXACT_AMOUNT ==> RESERVE_MODE_AT_MOST
 
 BounceMode.NoBounce ==> BounceMode.RichBounce
 BounceMode.Only256BitsOfBody ==> BounceMode.RichBounce
 BounceMode.RichBounceOnlyRootCell ==> BounceMode.RichBounce
-
-InMessageBounced ==> InMessage
 
 struct (:[opcode]) :[name] { ==> struct (0x00000000) :[name] {
 struct (:[opcode]) :[name] { ==> struct (0xFFFFFFFF) :[name] {
