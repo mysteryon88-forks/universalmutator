@@ -264,11 +264,14 @@ mutate examples/tolk-bench/contracts_FunC/01_jetton/jetton-wallet.fc func --muta
 analyze_mutants examples/tolk-bench/contracts_FunC/01_jetton/jetton-wallet.fc "cd /d examples\tolk-bench && npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" --mutantDir tmp/func-jetton-wallet-mutants --timeout 180
 ```
 
+```sh
+muton run --test.cmd "npx jest --runInBand tests/01_jetton/JettonWallet.spec.ts" contracts_Tolk/01_jetton/jetton-wallet-contract.tolk
+muton run contracts_Tolk/01_jetton/jetton-wallet-contract.tolk
+```
+
 ## Тестирование примера
 
 ```sh
 mutate examples/foo.fc func --mutantDir tmp/foo --swap
 mutate examples/foo.sol solidity --mutantDir tmp/solid --swap
-
-
 ```

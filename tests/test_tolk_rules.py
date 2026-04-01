@@ -160,3 +160,54 @@ class TestTolkRules(TestCase):
         self.assertIn("        var noBounce = BounceMode.RichBounce;", mutant_lines)
         self.assertIn("        var root = BounceMode.RichBounce;", mutant_lines)
         self.assertIn("        var shortBody = BounceMode.RichBounce;", mutant_lines)
+
+    def test_tolk_muton_regex_rules_generate_expected_mutants(self):
+        source = [
+            "fun mutonOps() {\n",
+            "    a += 5;\n",
+            "    b -= 6;\n",
+            "    c *= 7;\n",
+            "    d /= 8;\n",
+            "    e &= 1;\n",
+            "    f |= 2;\n",
+            "    g ^= 3;\n",
+            "    s <<= 1;\n",
+            "    t >>= 1;\n",
+            "    u << 2;\n",
+            "    v >> 2;\n",
+            "    var tval = true;\n",
+            "    var fval = false;\n",
+            "    var x = v ^ 1;\n",
+            "    var y = v & 1;\n",
+            "    var z = v | 1;\n",
+            "    if (cond) {\n",
+            "        break;\n",
+            "    }\n",
+            "    while (cond) {\n",
+            "        continue;\n",
+            "    }\n",
+            "    doSomething();\n",
+            "}\n",
+        ]
+
+        mutants = mutator.mutants_regexp(
+            source,
+            ruleFiles=["tolk.rules"],
+            ignorePatterns=[],
+        )
+        mutant_lines = {mutant[1].rstrip() for mutant in mutants}
+
+        self.assertIn("    a -= 5;", mutant_lines)
+        self.assertIn("    b += 6;", mutant_lines)
+        self.assertIn("    e |= 1;", mutant_lines)
+        self.assertIn("    f &= 2;", mutant_lines)
+        self.assertIn("    s >>= 1;", mutant_lines)
+        self.assertIn("    u >> 2;", mutant_lines)
+        self.assertIn("    var tval = false;", mutant_lines)
+        self.assertIn("    var fval = true;", mutant_lines)
+        self.assertIn("    var x = v & 1;", mutant_lines)
+        self.assertIn("    var y = v ^ 1;", mutant_lines)
+        self.assertIn("        continue;", mutant_lines)
+        self.assertIn("        break;", mutant_lines)
+        self.assertIn("    while (0==1) {", mutant_lines)
+        self.assertIn("    throw 0xFFFF;", mutant_lines)

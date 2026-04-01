@@ -6,11 +6,57 @@
 
 ^\s*import\s ==> DO_NOT_MUTATE
 
-// ==> SKIP_MUTATING_REST
 /\* ==> SKIP_MUTATING_REST
 
 true ==> false
 false ==> true
+
+# Comment replacement already covered by c_like.rules; add error replacement here.
+(^\s*)(\S+[^{}]+.*)\n ==> \1throw 0xFFFF;\n
+
+# Arithmetic assignment operator shuffle (muton AAOS).
+\+= ==> -=
+\+= ==> *=
+\+= ==> /=
+-= ==> +=
+-= ==> *=
+-= ==> /=
+\*= ==> +=
+\*= ==> -=
+\*= ==> /=
+/= ==> +=
+/= ==> -=
+/= ==> *=
+
+# Bitwise assignment operator shuffle (muton BAOS).
+\&= ==> |=
+\&= ==> ^=
+\|= ==> &=
+\|= ==> ^=
+\^= ==> &=
+\^= ==> |=
+
+# Shift assignment operator shuffle (muton SAOS).
+<<= ==> >>=
+>>= ==> <<=
+
+# Shift operator shuffle (muton SOS).
+<<(?!=) ==> >>
+>>(?!=) ==> <<
+
+# Bitwise operator shuffle with XOR (muton BOS).
+([^\^])\^([^\^]) ==> \1&\2
+([^\^])\^([^\^]) ==> \1|\2
+([^&])&([^&]) ==> \1^\2
+([^|])\|([^|]) ==> \1^\2
+
+# Loop control swap (muton LC).
+\bbreak\b ==> continue
+\bcontinue\b ==> break
+
+# While False (muton WF).
+while (\(.*\)) ==> while (0==1)
+while(\(.*\)) ==> while(0==1)
 
 # Tolk unions support `is` / `!is` runtime checks.
 (?<![!\w])is\b ==> !is

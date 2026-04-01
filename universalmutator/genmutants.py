@@ -347,7 +347,9 @@ def main():
         "go",
 
         # TON languages have C-like syntax (especially Tolk)
-        "tolk"
+        "tolk",
+        "tact",
+        "func"
     ]
 
     try:

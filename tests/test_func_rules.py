@@ -171,3 +171,79 @@ class TestFuncRules(TestCase):
         self.assertIn("  var ga = tuple_at(t, 0);", mutant_lines)
         self.assertIn("  throw_arg_if(1, 2, 3);", mutant_lines)
         self.assertIn("  throw_arg_unless(1, 2, 3);", mutant_lines)
+
+    def test_func_muton_regex_rules_generate_expected_mutants(self):
+        source = [
+            "int muton_ops(int a, int b, builder bb) {\n",
+            "  a += 5;\n",
+            "  b -= 6;\n",
+            "  a *= 7;\n",
+            "  b /= 8;\n",
+            "  a &= 1;\n",
+            "  b |= 2;\n",
+            "  a ^= 3;\n",
+            "  a <<= 1;\n",
+            "  b >>= 1;\n",
+            "  a << 2;\n",
+            "  b >> 2;\n",
+            "  var tval = true;\n",
+            "  var fval = false;\n",
+            "  var x = a ^ 1;\n",
+            "  var y = a & 1;\n",
+            "  var z = a | 1;\n",
+            "  ifnot (cond) {\n",
+            "    break;\n",
+            "  }\n",
+            "  while (cond) {\n",
+            "    continue;\n",
+            "  }\n",
+            "  until (cond) {\n",
+            "  }\n",
+            "  repeat (count) {\n",
+            "  }\n",
+            "  var diva = a / b;\n",
+            "  a /= b;\n",
+            "  a %= b;\n",
+            "  var moda = a % b;\n",
+            "  bb.store_coins(123);\n",
+            "  bb.store_int(7, 8);\n",
+            "  bb.store_uint(9, 8);\n",
+            "  store_uint(bb, 11, 16);\n",
+            "  doSomething();\n",
+            "  var q = cond ? a : b;\n",
+            "  return a;\n",
+            "}\n",
+        ]
+
+        mutants = mutator.mutants_regexp(
+            source,
+            ruleFiles=["func.rules"],
+            ignorePatterns=[],
+        )
+        mutant_lines = {mutant[1].rstrip() for mutant in mutants}
+
+        self.assertIn("  a -= 5;", mutant_lines)
+        self.assertIn("  b += 6;", mutant_lines)
+        self.assertIn("  a |= 1;", mutant_lines)
+        self.assertIn("  b &= 2;", mutant_lines)
+        self.assertIn("  a >>= 1;", mutant_lines)
+        self.assertIn("  a >> 2;", mutant_lines)
+        self.assertIn("  var tval = false;", mutant_lines)
+        self.assertIn("  var fval = true;", mutant_lines)
+        self.assertIn("  var x = a & 1;", mutant_lines)
+        self.assertIn("  var y = a ^ 1;", mutant_lines)
+        self.assertIn("    continue;", mutant_lines)
+        self.assertIn("    break;", mutant_lines)
+        self.assertIn("  while (0==1) {", mutant_lines)
+        self.assertIn("  until (0==1) {", mutant_lines)
+        self.assertIn("  repeat (0) {", mutant_lines)
+        self.assertIn("  var diva = a ~/ b;", mutant_lines)
+        self.assertIn("  a ~/= b;", mutant_lines)
+        self.assertIn("  a ~%= b;", mutant_lines)
+        self.assertIn("  var moda = a ~% b;", mutant_lines)
+        self.assertIn("  bb.store_coins(0);", mutant_lines)
+        self.assertIn("  bb.store_int(0, 8);", mutant_lines)
+        self.assertIn("  bb.store_uint(0, 8);", mutant_lines)
+        self.assertIn("  store_uint(bb, 0, 16);", mutant_lines)
+        self.assertIn("  ;; doSomething();", mutant_lines)
+        self.assertIn("  throw(0);", mutant_lines)

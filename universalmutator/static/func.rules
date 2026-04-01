@@ -9,6 +9,106 @@ throw_unless ==> throw_if
 throw_arg_if ==> throw_arg_unless
 throw_arg_unless ==> throw_arg_if
 
+# Comment replacement (muton CR).
+(^\s*)(\S+[^{}]+.*)\n ==> \1;; \2\n
+
+# Error replacement (muton ER).
+(^\s*)(\S+[^{}]+.*)\n ==> \1throw(0);\n
+
+# Boolean literal flip (muton BL).
+true ==> false
+false ==> true
+
+# Arithmetic assignment operator shuffle (muton AAOS).
+\+= ==> -=
+\+= ==> *=
+\+= ==> /=
+-= ==> +=
+-= ==> *=
+-= ==> /=
+\*= ==> +=
+\*= ==> -=
+\*= ==> /=
+/= ==> +=
+/= ==> -=
+/= ==> *=
+
+# Bitwise assignment operator shuffle (muton BAOS).
+\&= ==> |=
+\&= ==> ^=
+\|= ==> &=
+\|= ==> ^=
+\^= ==> &=
+\^= ==> |=
+
+# Shift assignment operator shuffle (muton SAOS).
+<<= ==> >>=
+>>= ==> <<=
+
+# Shift operator shuffle (muton SOS).
+<<(?!=) ==> >>
+>>(?!=) ==> <<
+
+# Bitwise operator shuffle with XOR (muton BOS).
+([^\^])\^([^\^]) ==> \1&\2
+([^\^])\^([^\^]) ==> \1|\2
+([^&])&([^&]) ==> \1^\2
+([^|])\|([^|]) ==> \1^\2
+
+# Division assignment operator shuffle (muton DAOS).
+(?<![~^])/= ==> ~/=
+(?<![~^])/= ==> ^/=
+~/= ==> /=
+~/= ==> ^/=
+\^/= ==> /=
+\^/= ==> ~/=
+
+# Division operator shuffle (muton DOS).
+([^*/~^])/([^*/]) ==> \1~/\2
+([^*/~^])/([^*/]) ==> \1^/\2
+~/(?![=]) ==> /
+~/(?![=]) ==> ^/
+\^/(?![=]) ==> /
+\^/(?![=]) ==> ~/
+
+# Modulo assignment operator shuffle (muton MAOS).
+(?<![~^])%= ==> ~%=
+(?<![~^])%= ==> ^%=
+~%= ==> %=
+~%= ==> ^%=
+\^%= ==> %=
+\^%= ==> ~%=
+
+# Modulo operator shuffle (muton MOS).
+(?<![~^])%(?![=]) ==> ~%
+(?<![~^])%(?![=]) ==> ^%
+~%(?![=]) ==> %
+~%(?![=]) ==> ^%
+\^%(?![=]) ==> %
+\^%(?![=]) ==> ~%
+
+# If Not False/True (muton INF/INT).
+ifnot (\(.*\)) ==> ifnot (0==1)
+ifnot(\(.*\)) ==> ifnot(0==1)
+ifnot (\(.*\)) ==> ifnot (1==1)
+ifnot(\(.*\)) ==> ifnot(1==1)
+
+# While False (muton WF).
+while (\(.*\)) ==> while (0==1)
+while(\(.*\)) ==> while(0==1)
+
+# Until False (muton UF).
+until (\(.*\)) ==> until (0==1)
+until(\(.*\)) ==> until(0==1)
+
+# Repeat Zero (muton RZ).
+repeat (\(.*\)) ==> repeat (0)
+repeat(\(.*\)) ==> repeat(0)
+
+# Loop control swap (muton LC).
+\bbreak\b ==> continue
+\bcontinue\b ==> break
+
 # Mutate documented function specifiers.
 \binline_ref\b ==> inline
 \binline\b ==> inline_ref
@@ -44,6 +144,16 @@ throw_arg_unless ==> throw_arg_if
 \bload_int\b ==> load_uint
 \bstore_uint\b ==> store_int
 \bstore_int\b ==> store_uint
+
+# Store coins/int/uint as zero (muton SC/SI/SU).
+(\.store_coins\s*\()\s*[^,\)]+ ==> \g<1>0
+(\.store_grams\s*\()\s*[^,\)]+ ==> \g<1>0
+(\.store_uint\s*\()\s*[^,\)]+ ==> \g<1>0
+(\.store_int\s*\()\s*[^,\)]+ ==> \g<1>0
+(\bstore_coins\s*\(\s*[^,]+,\s*)[^,\)]+ ==> \g<1>0
+(\bstore_grams\s*\(\s*[^,]+,\s*)[^,\)]+ ==> \g<1>0
+(\bstore_uint\s*\(\s*[^,]+,\s*)[^,]+ ==> \g<1>0
+(\bstore_int\s*\(\s*[^,]+,\s*)[^,]+ ==> \g<1>0
 
 # Swap modifying vs non-modifying call notation for numeric built-ins.
 (\b[A-Za-z_]\w*)\.load_int\s*\( ==> \1~load_int(
