@@ -1,75 +1,235 @@
-# Tact (TON) rules.
-#
+# =========================
+# Tact mutation rules — unified v1
+# Goal:
+# - keep productive regex-level mutations
+# - include TON/Tact security-relevant mutations
+# - avoid very noisy or obviously low-value transformations
 # Notes:
-# - universal.rules already provides most operator/number mutations.
-# - Here we mainly add comment skipping and a few Tact-specific flips.
+# - some ideas are intentionally excluded because they are better AST-level
+# =========================
 
-^\s*import\s ==> DO_NOT_MUTATE
-
+# --------------------------------
+# Guards: avoid imports and obvious full-line comments
+# --------------------------------
+^\s*import\b.* ==> DO_NOT_MUTATE
+^\s*//.* ==> DO_NOT_MUTATE
+^\s*///.* ==> DO_NOT_MUTATE
+^\s*/\*.* ==> DO_NOT_MUTATE
+^\s*\*.* ==> DO_NOT_MUTATE
+// ==> SKIP_MUTATING_REST
 /// ==> SKIP_MUTATING_REST
 /\* ==> SKIP_MUTATING_REST
 
-# Error replacement (muton ER).
-(^\s*)(\S+[^{}]+.*)\n ==> \1throw(0);\n
+# --------------------------------
+# Boolean literals
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+\btrue\b ==> false
+\bfalse\b ==> true
 
-true ==> false
-false ==> true
+# --------------------------------
+# Tact guard primitives
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+\bthrowIf\b ==> throwUnless
+\bthrowUnless\b ==> throwIf
 
-# Arithmetic assignment operator shuffle (muton AAOS).
+# --------------------------------
+# Comparison operators
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+(?<![<>=!])==(?!=) ==> !=
+!=(?!=) ==> ==
+ <=  ==>  < 
+ <=  ==>  == 
+ >=  ==>  > 
+ >=  ==>  == 
+ <  ==>  <= 
+ <  ==>  > 
+ >  ==>  >= 
+ >  ==>  < 
+
+# --------------------------------
+# Logical operators
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+&& ==> ||
+\|\| ==> &&
+!! ==> 
+
+# --------------------------------
+# Arithmetic operators
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+(?<!\+)\+(?!\+) ==> -
+(?<!-)-(?![-=>]) ==> +
+\* ==> /
+/ ==> *
 \+= ==> -=
-\+= ==> *=
-\+= ==> /=
 -= ==> +=
--= ==> *=
--= ==> /=
-\*= ==> +=
-\*= ==> -=
 \*= ==> /=
-/= ==> +=
-/= ==> -=
 /= ==> *=
 
-# Bitwise assignment operator shuffle (muton BAOS).
-\&= ==> |=
-\&= ==> ^=
-\|= ==> &=
-\|= ==> ^=
-\^= ==> &=
-\^= ==> |=
-
-# Shift assignment operator shuffle (muton SAOS).
-<<= ==> >>=
->>= ==> <<=
-
-# Shift operator shuffle (muton SOS).
+# --------------------------------
+# Bit shifts / compound bitwise assignments
+# MODERATE-NOISE / REGEX-SAFE
+# --------------------------------
 <<(?!=) ==> >>
 >>(?!=) ==> <<
+\&= ==> |=
+\|= ==> &=
+\^= ==> |=
+\^= ==> &=
 
-# Bitwise operator shuffle with XOR (muton BOS).
-([^\^])\^([^\^]) ==> \1&\2
-([^\^])\^([^\^]) ==> \1|\2
-([^&])&([^&]) ==> \1^\2
-([^|])\|([^|]) ==> \1^\2
+# --------------------------------
+# Null checks / optionals
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+==\s*null ==> != null
+!=\s*null ==> == null
 
-# While False (muton WF).
-while (\(.*\)) ==> while (0==1)
-while(\(.*\)) ==> while(0==1)
+# --------------------------------
+# Return booleans
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+\breturn\s+true\s*; ==> return false;
+\breturn\s+false\s*; ==> return true;
 
-# Until False (muton UF).
-until (\(.*\)) ==> until (0==1)
-until(\(.*\)) ==> until(0==1)
+# --------------------------------
+# Builtin min/max
+# MODERATE-NOISE / REGEX-SAFE
+# --------------------------------
+\bmin\b ==> max
+\bmax\b ==> min
 
-# Repeat Zero (muton RZ).
-repeat (\(.*\)) ==> repeat (0)
-repeat(\(.*\)) ==> repeat(0)
+# --------------------------------
+# TON/Tact: bounce flag
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bbounce\s*:\s*true\b ==> bounce: false
+\bbounce\s*:\s*false\b ==> bounce: true
 
-# Ternary True/False (muton TT/TF).
-(^\s*)([^\?\n]+)\?([^:\n]+):([^\n]+) ==> \1false ? \3 : \4
-(^\s*)([^\?\n]+)\?([^:\n]+):([^\n]+) ==> \1true ? \3 : \4
+# --------------------------------
+# TON/Tact: send mode constants / common flags
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bmode\s*:\s*0\b ==> mode: 64
+\bmode\s*:\s*64\b ==> mode: 0
+\bmode\s*:\s*64\b ==> mode: 128
+\bmode\s*:\s*128\b ==> mode: 0
+\bmode\s*:\s*128\b ==> mode: 64
 
-# Loop control swap (muton LC).
-\bbreak\b ==> continue
-\bcontinue\b ==> break
+\bSendPayGasSeparately\b ==> 0
+\bSendIgnoreErrors\b ==> 0
+\bSendRemainingValue\b ==> 0
+\bSendRemainingBalance\b ==> 0
 
-throwIf ==> throwUnless
-throwUnless ==> throwIf
+# --------------------------------
+# TON/Tact: attached value
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bvalue\s*:\s*0\b ==> value: 1
+\bvalue\s*:\s*1\b ==> value: 0
+\bcontext\(\)\.value\b ==> 0
+
+# --------------------------------
+# Tact/TL-B field serialization widths
+# SECURITY/STORAGE / REGEX-SAFE
+# --------------------------------
+\bas\s+uint256\b ==> as uint128
+\bas\s+uint128\b ==> as uint64
+\bas\s+uint64\b ==> as uint32
+\bas\s+uint32\b ==> as uint64
+\bas\s+uint16\b ==> as uint8
+\bas\s+uint8\b ==> as uint16
+
+\bas\s+int256\b ==> as int128
+\bas\s+int128\b ==> as int64
+\bas\s+int64\b ==> as int32
+\bas\s+int32\b ==> as int16
+\bas\s+int16\b ==> as int8
+\bas\s+int8\b ==> as int16
+
+\bas\s+coins\b ==> as uint64
+\bas\s+remaining\b ==> as bytes32
+
+# --------------------------------
+# Optional field declarations
+# STORAGE / MODERATE-NOISE
+# --------------------------------
+:\s*Address\?\s*; ==> : Address;
+:\s*Cell\?\s*; ==> : Cell;
+:\s*Slice\?\s*; ==> : Slice;
+:\s*Int\?\s*; ==> : Int;
+:\s*Bool\?\s*; ==> : Bool;
+:\s*String\?\s*; ==> : String;
+
+# --------------------------------
+# Access control: sender / owner patterns
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bsender\(\)\s*==\s*self\.owner\b ==> sender() != self.owner
+\bsender\(\)\s*!=\s*self\.owner\b ==> sender() == self.owner
+\bself\.owner\s*==\s*sender\(\)\b ==> self.owner != sender()
+\bself\.owner\s*!=\s*sender\(\)\b ==> self.owner == sender()
+
+\bsender\(\)\s*==\s*owner\b ==> sender() != owner
+\bsender\(\)\s*!=\s*owner\b ==> sender() == owner
+
+\bsender\(\)\s*==\s*self\.([A-Za-z_][A-Za-z0-9_]*)\b ==> sender() != self.\1
+\bsender\(\)\s*!=\s*self\.([A-Za-z_][A-Za-z0-9_]*)\b ==> sender() == self.\1
+\bself\.([A-Za-z_][A-Za-z0-9_]*)\s*==\s*sender\(\)\b ==> self.\1 != sender()
+\bself\.([A-Za-z_][A-Za-z0-9_]*)\s*!=\s*sender\(\)\b ==> self.\1 == sender()
+
+\bmyAddress\(\)\s*==\s*([A-Za-z_][A-Za-z0-9_\.()]*)\b ==> myAddress() != \1
+\bmyAddress\(\)\s*!=\s*([A-Za-z_][A-Za-z0-9_\.()]*)\b ==> myAddress() == \1
+
+# --------------------------------
+# Security-critical builtins
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bacceptMessage\s*\(\s*\)\s*; ==> ;
+
+# --------------------------------
+# Function kind mutations
+# ABI/INTERFACE / MODERATE-NOISE
+# --------------------------------
+\boverride\s+inline\s+fun\b ==> override fun
+\bvirtual\s+inline\s+fun\b ==> virtual fun
+\babstract\s+inline\s+fun\b ==> abstract fun
+\binline\s+fun\b ==> fun
+\bextends\s+mutates\s+fun\b ==> mutates fun
+\bextends\s+fun\b ==> fun
+\bget\s+fun\b ==> fun
+
+# --------------------------------
+# Message opcode mutations
+# HIGHER-NOISE BUT VALUABLE
+# --------------------------------
+message\(\s*0x([0-9a-fA-F]{8})\s*\) ==> message(0xFFFFFFFF)
+
+# --------------------------------
+# Receiver kind mutations
+# HIGHER-NOISE BUT VALUABLE
+# --------------------------------
+\bexternal\s*\( ==> receive(
+\breceive\s*\( ==> external(
+\bbounced\s*\( ==> receive(
+
+# --------------------------------
+# Storage helpers / map operations
+# HIGHER-NOISE / KEEP FOR EXPERIMENTS
+# --------------------------------
+\.set\s*\( ==> .replace(
+\.replace\s*\( ==> .set(
+
+# --------------------------------
+# Context/value guards
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bctx\.value\s*> ==> ctx.value >=
+\bctx\.value\s*< ==> ctx.value <=
+\bcontext\(\)\.value\s*> ==> context().value >=
+\bcontext\(\)\.value\s*< ==> context().value <=
+\bnow\(\)\s*> ==> now() >=
+\bnow\(\)\s*< ==> now() <=
