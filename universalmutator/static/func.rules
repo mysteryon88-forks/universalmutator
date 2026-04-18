@@ -8,6 +8,8 @@ throw_if ==> throw_unless
 throw_unless ==> throw_if
 throw_arg_if ==> throw_arg_unless
 throw_arg_unless ==> throw_arg_if
+THROW_IF ==> THROW_UNLESS
+THROW_UNLESS ==> THROW_IF
 
 # Comment replacement (muton CR).
 (^\s*)(\S+[^{}]+.*)\n ==> \1;; \2\n
@@ -118,6 +120,11 @@ repeat(\(.*\)) ==> repeat(0)
 \bmethod_id\s*\(\s*[^)\n]+\s*\) ==> method_id(0)
 \bmethod_id\b(?!\s*\() ==> method_id(0)
 
+# Mutate documented gas/state management helpers.
+(^\s*)accept_message\s*\(\s*\)\s*; ==> \1;
+(^\s*)commit\s*\(\s*\)\s*; ==> \1;
+(^\s*)set_code\s*\(\s*[^;\n]+\)\s*; ==> \1;
+
 # Mutate documented time/random helpers.
 \bnow\s*\( ==> cur_lt(
 \bcur_lt\s*\( ==> block_lt(
@@ -174,6 +181,10 @@ repeat(\(.*\)) ==> repeat(0)
 \bbuilder_bits\s*\( ==> builder_refs(
 \bslice_empty\?\s*\( ==> slice_refs_empty?(
 \bslice_refs_empty\?\s*\( ==> slice_empty?(
+\bslice_empty\?\s*\( ==> slice_data_empty?(
+\bslice_data_empty\?\s*\( ==> slice_empty?(
+\bslice_refs_empty\?\s*\( ==> slice_data_empty?(
+\bslice_data_empty\?\s*\( ==> slice_refs_empty?(
 
 # Swap signed/unsigned dictionary helpers.
 \bidict_([A-Za-z0-9_]+\??)(?=[^A-Za-z0-9_]|$) ==> udict_\1

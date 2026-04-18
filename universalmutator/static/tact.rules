@@ -1,38 +1,52 @@
-# =========================
-# Tact mutation rules — unified v1
-# Goal:
-# - keep productive regex-level mutations
-# - include TON/Tact security-relevant mutations
-# - avoid very noisy or obviously low-value transformations
+# Tact mutation rules - merged main ruleset.
+#
 # Notes:
-# - some ideas are intentionally excluded because they are better AST-level
-# =========================
+# - universal.rules already provides many generic arithmetic/number mutations.
+# - This file keeps Tact-specific rules plus retained legacy mutations that are
+#   useful for standalone `--only tact.rules` runs.
+# - Rules from tact1.rules are merged here; duplicate rule lines are removed.
 
 # --------------------------------
-# Guards: avoid imports and obvious full-line comments
+# Guards: avoid imports and obvious comment-only lines
 # --------------------------------
 ^\s*import\b.* ==> DO_NOT_MUTATE
 ^\s*//.* ==> DO_NOT_MUTATE
-^\s*///.* ==> DO_NOT_MUTATE
 ^\s*/\*.* ==> DO_NOT_MUTATE
 ^\s*\*.* ==> DO_NOT_MUTATE
-// ==> SKIP_MUTATING_REST
-/// ==> SKIP_MUTATING_REST
 /\* ==> SKIP_MUTATING_REST
 
 # --------------------------------
-# Boolean literals
+# Broad statement replacement
+# LEGACY / HIGHER-NOISE
+# --------------------------------
+(^\s*)(\S+[^{}]+.*)\n ==> \1throw(0);\n
+
+# --------------------------------
+# Boolean literals and Tact guard primitives
 # LOW-NOISE / REGEX-SAFE
 # --------------------------------
 \btrue\b ==> false
 \bfalse\b ==> true
-
-# --------------------------------
-# Tact guard primitives
-# LOW-NOISE / REGEX-SAFE
-# --------------------------------
 \bthrowIf\b ==> throwUnless
 \bthrowUnless\b ==> throwIf
+!! ==> 
+
+# --------------------------------
+# Tact debug and throw helpers
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+(^\s*)require\s*\(\s*([^,;\n]+?)\s*,\s*[^;\n]+\)\s*; ==> \1throwUnless(0, \2);
+(^\s*)require\s*\(\s*([^,;\n]+?)\s*,\s*[^;\n]+\)\s*; ==> \1throwIf(0, \2);
+(^\s*)require\s*\([^;\n]*\)\s*; ==> 
+(\b(?:throw|throwIf|throwUnless|nativeThrow|nativeThrowIf|nativeThrowUnless)\s*\(\s*)\d+\b ==> \g<1>0
+(^\s*)throw\s*\([^;\n]*\)\s*; ==> 
+(^\s*)throwIf\s*\([^;\n]*\)\s*; ==> 
+(^\s*)throwUnless\s*\([^;\n]*\)\s*; ==> 
+(^\s*)nativeThrow\s*\([^;\n]*\)\s*; ==> 
+(^\s*)nativeThrowIf\s*\([^;\n]*\)\s*; ==> 
+(^\s*)nativeThrowUnless\s*\([^;\n]*\)\s*; ==> 
+\bnativeThrowIf\b ==> nativeThrowUnless
+\bnativeThrowUnless\b ==> nativeThrowIf
 
 # --------------------------------
 # Comparison operators
@@ -48,59 +62,100 @@
  <  ==>  > 
  >  ==>  >= 
  >  ==>  < 
+==\s*null ==> != null
+!=\s*null ==> == null
 
 # --------------------------------
-# Logical operators
-# LOW-NOISE / REGEX-SAFE
+# Arithmetic assignment operator shuffle
+# LEGACY / HIGHER-NOISE
 # --------------------------------
-&& ==> ||
-\|\| ==> &&
-!! ==> 
+\+= ==> -=
+\+= ==> *=
+\+= ==> /=
+-= ==> +=
+-= ==> *=
+-= ==> /=
+\*= ==> +=
+\*= ==> -=
+\*= ==> /=
+/= ==> +=
+/= ==> -=
+/= ==> *=
 
 # --------------------------------
 # Arithmetic operators
 # LOW-NOISE / REGEX-SAFE
 # --------------------------------
-(?<!\+)\+(?!\+) ==> -
+(?<!\+)\+(?![\+=]) ==> -
 (?<!-)-(?![-=>]) ==> +
-\* ==> /
-/ ==> *
-\+= ==> -=
--= ==> +=
-\*= ==> /=
-/= ==> *=
+\*(?!=) ==> /
+/(?!=|\*|/) ==> *
 
 # --------------------------------
-# Bit shifts / compound bitwise assignments
-# MODERATE-NOISE / REGEX-SAFE
+# Bitwise assignment operator shuffle
+# LEGACY / MODERATE-NOISE
 # --------------------------------
+\&= ==> |=
+\&= ==> ^=
+\|= ==> &=
+\|= ==> ^=
+\^= ==> &=
+\^= ==> |=
+
+# --------------------------------
+# Shift assignment/operator shuffle
+# LEGACY / MODERATE-NOISE
+# --------------------------------
+<<= ==> >>=
+>>= ==> <<=
 <<(?!=) ==> >>
 >>(?!=) ==> <<
-\&= ==> |=
-\|= ==> &=
-\^= ==> |=
-\^= ==> &=
 
 # --------------------------------
-# Null checks / optionals
-# LOW-NOISE / REGEX-SAFE
-# --------------------------------
-==\s*null ==> != null
-!=\s*null ==> == null
-
-# --------------------------------
-# Return booleans
-# LOW-NOISE / REGEX-SAFE
-# --------------------------------
-\breturn\s+true\s*; ==> return false;
-\breturn\s+false\s*; ==> return true;
-
-# --------------------------------
-# Builtin min/max
+# Bitwise operators
 # MODERATE-NOISE / REGEX-SAFE
 # --------------------------------
-\bmin\b ==> max
-\bmax\b ==> min
+([^\^=])\^([^\^=]) ==> \1&\2
+([^\^=])\^([^\^=]) ==> \1|\2
+([^&=])&([^&=]) ==> \1^\2
+([^|=])\|([^|=]) ==> \1^\2
+
+# --------------------------------
+# Loop reachability and control
+# LEGACY / HIGHER-NOISE
+# --------------------------------
+while (\(.*\)) ==> while (0==1)
+while(\(.*\)) ==> while(0==1)
+until (\(.*\)) ==> until (0==1)
+until(\(.*\)) ==> until(0==1)
+repeat (\(.*\)) ==> repeat (0)
+repeat(\(.*\)) ==> repeat(0)
+\bbreak\b ==> continue
+\bcontinue\b ==> break
+
+# --------------------------------
+# Ternary branch forcing
+# LEGACY / HIGHER-NOISE
+# --------------------------------
+(^\s*)([^\?\n]+)\?([^:\n]+):([^\n]+) ==> \1false ? \3 : \4
+(^\s*)([^\?\n]+)\?([^:\n]+):([^\n]+) ==> \1true ? \3 : \4
+
+# --------------------------------
+# Tact math helper families
+# MODERATE-NOISE / REGEX-SAFE
+# --------------------------------
+\babs\s*\( ==> sign(
+\bsign\s*\( ==> abs(
+\bmulShiftRight\b ==> mulShiftRightRound
+\bmulShiftRight\b ==> mulShiftRightCeil
+\bmulShiftRightRound\b ==> mulShiftRight
+\bmulShiftRightRound\b ==> mulShiftRightCeil
+\bmulShiftRightCeil\b ==> mulShiftRight
+\bmulShiftRightCeil\b ==> mulShiftRightRound
+(\blog\s*\(\s*[^,;\n]+,\s*)2(\s*\)) ==> \g<1>10\2
+(\blog\s*\(\s*[^,;\n]+,\s*)10(\s*\)) ==> \g<1>2\2
+(\bpow\s*\(\s*)2(\s*,) ==> \g<1>10\2
+(\bpow\s*\(\s*)10(\s*,) ==> \g<1>2\2
 
 # --------------------------------
 # TON/Tact: bounce flag
@@ -110,27 +165,98 @@
 \bbounce\s*:\s*false\b ==> bounce: true
 
 # --------------------------------
-# TON/Tact: send mode constants / common flags
+# TON/Tact: send mode literals, base modes, and common flags
 # SECURITY-RELEVANT / REGEX-SAFE
 # --------------------------------
 \bmode\s*:\s*0\b ==> mode: 64
+\bmode\s*:\s*1\b ==> mode: 0
+\bmode\s*:\s*2\b ==> mode: 0
+\bmode\s*:\s*16\b ==> mode: 0
+\bmode\s*:\s*32\b ==> mode: 0
 \bmode\s*:\s*64\b ==> mode: 0
 \bmode\s*:\s*64\b ==> mode: 128
 \bmode\s*:\s*128\b ==> mode: 0
 \bmode\s*:\s*128\b ==> mode: 64
+\bmode\s*:\s*1024\b ==> mode: 0
 
+\bSendDefaultMode\b ==> SendRemainingValue
 \bSendPayGasSeparately\b ==> 0
+\bSendPayFwdFeesSeparately\b ==> 0
 \bSendIgnoreErrors\b ==> 0
+\bSendBounceIfActionFail\b ==> 0
+\bSendDestroyIfZero\b ==> 0
+\bSendRemainingValue\b ==> SendDefaultMode
+\bSendRemainingValue\b ==> SendRemainingBalance
 \bSendRemainingValue\b ==> 0
+\bSendRemainingBalance\b ==> SendDefaultMode
+\bSendRemainingBalance\b ==> SendRemainingValue
 \bSendRemainingBalance\b ==> 0
+\bSendOnlyEstimateFee\b ==> 0
 
 # --------------------------------
-# TON/Tact: attached value
+# TON/Tact: nativeReserve modes and flags
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+\bReserveExact\b ==> ReserveAllExcept
+\bReserveAllExcept\b ==> ReserveExact
+\bReserveAllExcept\b ==> ReserveAtMost
+\bReserveAtMost\b ==> ReserveExact
+\bReserveAtMost\b ==> ReserveAllExcept
+\bReserveAddOriginalBalance\b ==> 0
+\bReserveInvertSign\b ==> 0
+\bReserveBounceIfActionFail\b ==> 0
+
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b0\b([^;\n]*\)) ==> \g<1>1\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b1\b([^;\n]*\)) ==> \g<1>0\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b1\b([^;\n]*\)) ==> \g<1>2\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b2\b([^;\n]*\)) ==> \g<1>0\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b2\b([^;\n]*\)) ==> \g<1>1\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b4\b([^;\n]*\)) ==> \g<1>0\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b8\b([^;\n]*\)) ==> \g<1>0\2
+(\bnativeReserve\s*\(\s*[^,;\n]+,\s*[^;\n]*?)\b16\b([^;\n]*\)) ==> \g<1>0\2
+
+# --------------------------------
+# TON/Tact: attached value / time-value sources
 # SECURITY-RELEVANT / REGEX-SAFE
 # --------------------------------
 \bvalue\s*:\s*0\b ==> value: 1
 \bvalue\s*:\s*1\b ==> value: 0
 \bcontext\(\)\.value\b ==> 0
+\bctx\.value\b ==> 0
+\bnow\(\) ==> 0
+
+# --------------------------------
+# TON/Tact: context and state helpers
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+(?<!fun\s)\bnow\s*\(\s*\) ==> curLt()
+(?<!fun\s)\bcurLt\s*\(\s*\) ==> blockLt()
+(?<!fun\s)\bblockLt\s*\(\s*\) ==> curLt()
+(?<!fun\s)\binMsg\s*\(\s*\) ==> context().raw
+\bcontext\(\)\.raw\b ==> inMsg()
+(?<!fun\s)\bsender\s*\(\s*\) ==> myAddress()
+(?<!fun\s)\bmyAddress\s*\(\s*\) ==> sender()
+(?<!fun\s)\bmyBalance\s*\(\s*\) ==> context().value
+(?<!fun\s)\bmyStorageDue\s*\(\s*\) ==> gasConsumed()
+(?<!fun\s)\bgasConsumed\s*\(\s*\) ==> myStorageDue()
+(?<!fun\s)\bgasConsumed\s*\(\s*\) ==> context().readForwardFee()
+\bcontext\(\)\.readForwardFee\s*\(\s*\) ==> gasConsumed()
+
+# --------------------------------
+# TON/Tact: random helpers and seed APIs
+# SECURITY-RELEVANT / REGEX-SAFE
+# --------------------------------
+(?<!fun\s)\brandomInt\s*\(\s*\) ==> getSeed()
+(?<!fun\s)\bgetSeed\s*\(\s*\) ==> randomInt()
+(?<!fun\s)\brandomInt\s*\(\s*\) ==> nativeRandom()
+(?<!fun\s)\bnativeRandom\s*\(\s*\) ==> randomInt()
+(?<!fun\s)\bsetSeed\s*\( ==> nativeRandomize(
+(?<!fun\s)\bnativeRandomize\s*\( ==> setSeed(
+(?<!fun\s)\bnativePrepareRandom\s*\(\s*\) ==> nativeRandomizeLt()
+(?<!fun\s)\bnativeRandomizeLt\s*\(\s*\) ==> nativePrepareRandom()
+(?<!fun\s)\bnativeRandomInterval\s*\(\s*([^,()\n]+?)\s*\) ==> random(0, \1)
+(?<!fun\s)\brandom\s*\(\s*0\s*,\s*([^,()\n]+?)\s*\) ==> nativeRandomInterval(\1)
+(?<!fun\s)\brandom\s*\(\s*([^,()\n]+?)\s*,\s*([^,()\n]+?)\s*\) ==> random(\2, \1)
 
 # --------------------------------
 # Tact/TL-B field serialization widths
@@ -142,6 +268,12 @@
 \bas\s+uint32\b ==> as uint64
 \bas\s+uint16\b ==> as uint8
 \bas\s+uint8\b ==> as uint16
+\bas\s+uint256\b ==> as int256
+\bas\s+uint128\b ==> as int128
+\bas\s+uint64\b ==> as int64
+\bas\s+uint32\b ==> as int32
+\bas\s+uint16\b ==> as int16
+\bas\s+uint8\b ==> as int8
 
 \bas\s+int256\b ==> as int128
 \bas\s+int128\b ==> as int64
@@ -149,6 +281,12 @@
 \bas\s+int32\b ==> as int16
 \bas\s+int16\b ==> as int8
 \bas\s+int8\b ==> as int16
+\bas\s+int256\b ==> as uint256
+\bas\s+int128\b ==> as uint128
+\bas\s+int64\b ==> as uint64
+\bas\s+int32\b ==> as uint32
+\bas\s+int16\b ==> as uint16
+\bas\s+int8\b ==> as uint8
 
 \bas\s+coins\b ==> as uint64
 \bas\s+remaining\b ==> as bytes32
@@ -168,11 +306,6 @@
 # Access control: sender / owner patterns
 # SECURITY-RELEVANT / REGEX-SAFE
 # --------------------------------
-\bsender\(\)\s*==\s*self\.owner\b ==> sender() != self.owner
-\bsender\(\)\s*!=\s*self\.owner\b ==> sender() == self.owner
-\bself\.owner\s*==\s*sender\(\)\b ==> self.owner != sender()
-\bself\.owner\s*!=\s*sender\(\)\b ==> self.owner == sender()
-
 \bsender\(\)\s*==\s*owner\b ==> sender() != owner
 \bsender\(\)\s*!=\s*owner\b ==> sender() == owner
 
@@ -188,15 +321,12 @@
 # Security-critical builtins
 # SECURITY-RELEVANT / REGEX-SAFE
 # --------------------------------
-\bacceptMessage\s*\(\s*\)\s*; ==> ;
+\bacceptMessage\s*\(\s*\)\s*; ==> 
 
 # --------------------------------
 # Function kind mutations
 # ABI/INTERFACE / MODERATE-NOISE
 # --------------------------------
-\boverride\s+inline\s+fun\b ==> override fun
-\bvirtual\s+inline\s+fun\b ==> virtual fun
-\babstract\s+inline\s+fun\b ==> abstract fun
 \binline\s+fun\b ==> fun
 \bextends\s+mutates\s+fun\b ==> mutates fun
 \bextends\s+fun\b ==> fun
@@ -222,14 +352,3 @@ message\(\s*0x([0-9a-fA-F]{8})\s*\) ==> message(0xFFFFFFFF)
 # --------------------------------
 \.set\s*\( ==> .replace(
 \.replace\s*\( ==> .set(
-
-# --------------------------------
-# Context/value guards
-# SECURITY-RELEVANT / REGEX-SAFE
-# --------------------------------
-\bctx\.value\s*> ==> ctx.value >=
-\bctx\.value\s*< ==> ctx.value <=
-\bcontext\(\)\.value\s*> ==> context().value >=
-\bcontext\(\)\.value\s*< ==> context().value <=
-\bnow\(\)\s*> ==> now() >=
-\bnow\(\)\s*< ==> now() <=

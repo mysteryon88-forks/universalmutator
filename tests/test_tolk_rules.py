@@ -15,6 +15,10 @@ class TestTolkRules(TestCase):
             "struct (0x01) ShortPrefix {\n",
             "    value: uint8\n",
             "}\n",
+            "struct AuctionConfig {\n",
+            "    ownerAddress: address? = null\n",
+            "    minBid: coins = 0\n",
+            "}\n",
             "fun CounterIncrement.bump(mutate self): self {\n",
             "    return self;\n",
             "}\n",
@@ -67,6 +71,9 @@ class TestTolkRules(TestCase):
             "    commitContractDataAndActions();\n",
             "}\n",
             "fun sendModes(msg: cell) {\n",
+            "    notify.send(SEND_MODE_REGULAR);\n",
+            "    deploy.send(0);\n",
+            "    sendRawMessage(msg, 0);\n",
             "    sendRawMessage(msg, SEND_MODE_IGNORE_ERRORS | SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE);\n",
             "    sendRawMessage(msg, SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);\n",
             "    sendRawMessage(msg, SEND_MODE_CARRY_ALL_BALANCE);\n",
@@ -114,12 +121,15 @@ class TestTolkRules(TestCase):
         self.assertIn("struct (0xFFFFFFFF) CounterIncrement {", mutant_lines)
         self.assertIn("struct (0x00000000) ShortPrefix {", mutant_lines)
         self.assertIn("struct (0xFFFFFFFF) ShortPrefix {", mutant_lines)
+        self.assertIn("    ownerAddress: address?", mutant_lines)
+        self.assertIn("    minBid: coins", mutant_lines)
         self.assertIn("    incBy: int32", mutant_lines)
         self.assertIn("    decBy: uint32", mutant_lines)
         self.assertIn("fun CounterIncrement.bump(self): self {", mutant_lines)
         self.assertIn("@noinline", mutant_lines)
         self.assertIn("@inline", mutant_lines)
         self.assertIn("@method_id(0)", mutant_lines)
+        self.assertIn("fun inlineFn(a: int, delta: int): int {", mutant_lines)
         self.assertIn("fun helper(cs: slice, mutate amount: int, target: Cell<address>?, body: slice) {", mutant_lines)
         self.assertIn("fun helper(mutate cs: slice, amount: int, target: Cell<address>?, body: slice) {", mutant_lines)
         self.assertIn("    if (amount > 0) throw ERR;", mutant_lines)
@@ -142,12 +152,19 @@ class TestTolkRules(TestCase):
         self.assertIn("    var seed = random.uint256();", mutant_lines)
         self.assertIn("    commitContractDataAndActions();", mutant_lines)
         self.assertIn("    acceptExternalMessage();", mutant_lines)
+        self.assertIn("    notify.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE);", mutant_lines)
+        self.assertIn("    deploy.send(64);", mutant_lines)
+        self.assertIn("    sendRawMessage(msg, 64);", mutant_lines)
         self.assertIn("    sendRawMessage(msg, 0 | SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE);", mutant_lines)
         self.assertIn("    sendRawMessage(msg, SEND_MODE_IGNORE_ERRORS | SEND_MODE_CARRY_ALL_BALANCE);", mutant_lines)
-        self.assertIn("    sendRawMessage(msg, SEND_MODE_IGNORE_ERRORS | 0);", mutant_lines)
+        self.assertIn(
+            "    sendRawMessage(msg, SEND_MODE_IGNORE_ERRORS | SEND_MODE_REGULAR);",
+            mutant_lines,
+        )
         self.assertIn("    sendRawMessage(msg, 0 | SEND_MODE_BOUNCE_ON_ACTION_FAIL);", mutant_lines)
         self.assertIn("    sendRawMessage(msg, SEND_MODE_PAY_FEES_SEPARATELY | 0);", mutant_lines)
         self.assertIn("    sendRawMessage(msg, SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE);", mutant_lines)
+        self.assertIn("    sendRawMessage(msg, SEND_MODE_REGULAR);", mutant_lines)
         self.assertIn('    reserveToncoinsOnBalance(ton("0.01"), RESERVE_MODE_EXACT_AMOUNT);', mutant_lines)
         self.assertIn('    reserveToncoinsOnBalance(ton("0.01"), RESERVE_MODE_AT_MOST);', mutant_lines)
         self.assertIn('    val oldCrc = stringCrc16("legacy");', mutant_lines)

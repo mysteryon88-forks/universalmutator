@@ -5,6 +5,7 @@
 # - These rules mirror conservative Tolk-specific surface-syntax edits.
 
 //:[comment] ==> DO_NOT_MUTATE
+/*:[comment]*/ ==> DO_NOT_MUTATE
 
 import :[rest] ==> DO_NOT_MUTATE
 
@@ -50,20 +51,195 @@ acceptExternalMessage ==> commitContractDataAndActions
 commitContractDataAndActions ==> acceptExternalMessage
 random.uint256 ==> random.getSeed
 random.getSeed ==> random.uint256
+:[recv].loadRef(:[args]) ==> :[recv].preloadRef(:[args])
+:[recv].preloadRef(:[args]) ==> :[recv].loadRef(:[args])
+:[recv].loadInt(:[args]) ==> :[recv].preloadInt(:[args])
+:[recv].preloadInt(:[args]) ==> :[recv].loadInt(:[args])
+:[recv].loadUint(:[args]) ==> :[recv].preloadUint(:[args])
+:[recv].preloadUint(:[args]) ==> :[recv].loadUint(:[args])
+:[recv].loadBits(:[args]) ==> :[recv].preloadBits(:[args])
+:[recv].preloadBits(:[args]) ==> :[recv].loadBits(:[args])
+:[recv].loadDict(:[args]) ==> :[recv].preloadDict(:[args])
+:[recv].preloadDict(:[args]) ==> :[recv].loadDict(:[args])
+:[recv].loadMaybeRef(:[args]) ==> :[recv].preloadMaybeRef(:[args])
+:[recv].preloadMaybeRef(:[args]) ==> :[recv].loadMaybeRef(:[args])
+:[recv].loadInt(:[args]) ==> :[recv].loadUint(:[args])
+:[recv].loadUint(:[args]) ==> :[recv].loadInt(:[args])
+:[recv].preloadInt(:[args]) ==> :[recv].preloadUint(:[args])
+:[recv].preloadUint(:[args]) ==> :[recv].preloadInt(:[args])
+:[recv].storeInt(:[args]) ==> :[recv].storeUint(:[args])
+:[recv].storeUint(:[args]) ==> :[recv].storeInt(:[args])
+:[recv].remainingBitsCount() ==> :[recv].remainingRefsCount()
+:[recv].remainingRefsCount() ==> :[recv].remainingBitsCount()
+:[recv].isEmpty() ==> :[recv].isEndOfBits()
+:[recv].isEmpty() ==> :[recv].isEndOfRefs()
+:[recv].isEndOfBits() ==> :[recv].isEmpty()
+:[recv].isEndOfRefs() ==> :[recv].isEmpty()
+:[recv].getFirstBits(:[args]) ==> :[recv].getLastBits(:[args])
+:[recv].getLastBits(:[args]) ==> :[recv].getFirstBits(:[args])
+:[recv].getStorageDuePayment() ==> :[recv].getStoragePaidPayment()
+:[recv].getStoragePaidPayment() ==> :[recv].getStorageDuePayment()
+:[recv].sendAndEstimateFee(:[args]) ==> :[recv].estimateFeeWithoutSending(:[args])
+:[recv].estimateFeeWithoutSending(:[args]) ==> :[recv].sendAndEstimateFee(:[args])
+:[recv].isInternal() ==> :[recv].isExternal()
+:[recv].isExternal() ==> :[recv].isInternal()
+:[recv].loadMessageOp(:[args]) ==> :[recv].loadMessageQueryId(:[args])
+:[recv].loadMessageQueryId(:[args]) ==> :[recv].loadMessageOp(:[args])
+:[recv].storeMessageOp(:[args]) ==> :[recv].storeMessageQueryId(:[args])
+:[recv].storeMessageQueryId(:[args]) ==> :[recv].storeMessageOp(:[args])
+:[recv].iDictGet(:[args]) ==> :[recv].uDictGet(:[args])
+:[recv].uDictGet(:[args]) ==> :[recv].iDictGet(:[args])
+:[recv].iDictSet(:[args]) ==> :[recv].uDictSet(:[args])
+:[recv].uDictSet(:[args]) ==> :[recv].iDictSet(:[args])
+:[recv].iDictSetRef(:[args]) ==> :[recv].uDictSetRef(:[args])
+:[recv].uDictSetRef(:[args]) ==> :[recv].iDictSetRef(:[args])
+:[recv].iDictSetIfNotExists(:[args]) ==> :[recv].uDictSetIfNotExists(:[args])
+:[recv].uDictSetIfNotExists(:[args]) ==> :[recv].iDictSetIfNotExists(:[args])
+:[recv].iDictSetIfExists(:[args]) ==> :[recv].uDictSetIfExists(:[args])
+:[recv].uDictSetIfExists(:[args]) ==> :[recv].iDictSetIfExists(:[args])
+:[recv].iDictGetRef(:[args]) ==> :[recv].uDictGetRef(:[args])
+:[recv].uDictGetRef(:[args]) ==> :[recv].iDictGetRef(:[args])
+:[recv].iDictGetRefOrNull(:[args]) ==> :[recv].uDictGetRefOrNull(:[args])
+:[recv].uDictGetRefOrNull(:[args]) ==> :[recv].iDictGetRefOrNull(:[args])
+:[recv].iDictDelete(:[args]) ==> :[recv].uDictDelete(:[args])
+:[recv].uDictDelete(:[args]) ==> :[recv].iDictDelete(:[args])
+:[recv].iDictSetAndGet(:[args]) ==> :[recv].uDictSetAndGet(:[args])
+:[recv].uDictSetAndGet(:[args]) ==> :[recv].iDictSetAndGet(:[args])
+:[recv].iDictSetAndGetRefOrNull(:[args]) ==> :[recv].uDictSetAndGetRefOrNull(:[args])
+:[recv].uDictSetAndGetRefOrNull(:[args]) ==> :[recv].iDictSetAndGetRefOrNull(:[args])
+:[recv].iDictDeleteAndGet(:[args]) ==> :[recv].uDictDeleteAndGet(:[args])
+:[recv].uDictDeleteAndGet(:[args]) ==> :[recv].iDictDeleteAndGet(:[args])
+:[recv].iDictSetBuilder(:[args]) ==> :[recv].uDictSetBuilder(:[args])
+:[recv].uDictSetBuilder(:[args]) ==> :[recv].iDictSetBuilder(:[args])
+:[recv].iDictSetBuilderIfNotExists(:[args]) ==> :[recv].uDictSetBuilderIfNotExists(:[args])
+:[recv].uDictSetBuilderIfNotExists(:[args]) ==> :[recv].iDictSetBuilderIfNotExists(:[args])
+:[recv].iDictSetBuilderIfExists(:[args]) ==> :[recv].uDictSetBuilderIfExists(:[args])
+:[recv].uDictSetBuilderIfExists(:[args]) ==> :[recv].iDictSetBuilderIfExists(:[args])
+:[recv].iDictDeleteFirstAndGet(:[args]) ==> :[recv].uDictDeleteFirstAndGet(:[args])
+:[recv].uDictDeleteFirstAndGet(:[args]) ==> :[recv].iDictDeleteFirstAndGet(:[args])
+:[recv].iDictDeleteLastAndGet(:[args]) ==> :[recv].uDictDeleteLastAndGet(:[args])
+:[recv].uDictDeleteLastAndGet(:[args]) ==> :[recv].iDictDeleteLastAndGet(:[args])
+:[recv].iDictGetFirst(:[args]) ==> :[recv].uDictGetFirst(:[args])
+:[recv].uDictGetFirst(:[args]) ==> :[recv].iDictGetFirst(:[args])
+:[recv].iDictGetFirstAsRef(:[args]) ==> :[recv].uDictGetFirstAsRef(:[args])
+:[recv].uDictGetFirstAsRef(:[args]) ==> :[recv].iDictGetFirstAsRef(:[args])
+:[recv].iDictGetLast(:[args]) ==> :[recv].uDictGetLast(:[args])
+:[recv].uDictGetLast(:[args]) ==> :[recv].iDictGetLast(:[args])
+:[recv].iDictGetLastAsRef(:[args]) ==> :[recv].uDictGetLastAsRef(:[args])
+:[recv].uDictGetLastAsRef(:[args]) ==> :[recv].iDictGetLastAsRef(:[args])
+:[recv].iDictGetNext(:[args]) ==> :[recv].uDictGetNext(:[args])
+:[recv].uDictGetNext(:[args]) ==> :[recv].iDictGetNext(:[args])
+:[recv].iDictGetNextOrEqual(:[args]) ==> :[recv].uDictGetNextOrEqual(:[args])
+:[recv].uDictGetNextOrEqual(:[args]) ==> :[recv].iDictGetNextOrEqual(:[args])
+:[recv].iDictGetPrev(:[args]) ==> :[recv].uDictGetPrev(:[args])
+:[recv].uDictGetPrev(:[args]) ==> :[recv].iDictGetPrev(:[args])
+:[recv].iDictGetPrevOrEqual(:[args]) ==> :[recv].uDictGetPrevOrEqual(:[args])
+:[recv].uDictGetPrevOrEqual(:[args]) ==> :[recv].iDictGetPrevOrEqual(:[args])
+:[recv].iDictGetFirst(:[args]) ==> :[recv].iDictGetLast(:[args])
+:[recv].iDictGetLast(:[args]) ==> :[recv].iDictGetFirst(:[args])
+:[recv].uDictGetFirst(:[args]) ==> :[recv].uDictGetLast(:[args])
+:[recv].uDictGetLast(:[args]) ==> :[recv].uDictGetFirst(:[args])
+:[recv].sDictGetFirst(:[args]) ==> :[recv].sDictGetLast(:[args])
+:[recv].sDictGetLast(:[args]) ==> :[recv].sDictGetFirst(:[args])
+:[recv].iDictGetFirstAsRef(:[args]) ==> :[recv].iDictGetLastAsRef(:[args])
+:[recv].iDictGetLastAsRef(:[args]) ==> :[recv].iDictGetFirstAsRef(:[args])
+:[recv].uDictGetFirstAsRef(:[args]) ==> :[recv].uDictGetLastAsRef(:[args])
+:[recv].uDictGetLastAsRef(:[args]) ==> :[recv].uDictGetFirstAsRef(:[args])
+:[recv].sDictGetFirstAsRef(:[args]) ==> :[recv].sDictGetLastAsRef(:[args])
+:[recv].sDictGetLastAsRef(:[args]) ==> :[recv].sDictGetFirstAsRef(:[args])
+:[recv].iDictDeleteFirstAndGet(:[args]) ==> :[recv].iDictDeleteLastAndGet(:[args])
+:[recv].iDictDeleteLastAndGet(:[args]) ==> :[recv].iDictDeleteFirstAndGet(:[args])
+:[recv].uDictDeleteFirstAndGet(:[args]) ==> :[recv].uDictDeleteLastAndGet(:[args])
+:[recv].uDictDeleteLastAndGet(:[args]) ==> :[recv].uDictDeleteFirstAndGet(:[args])
+:[recv].sDictDeleteFirstAndGet(:[args]) ==> :[recv].sDictDeleteLastAndGet(:[args])
+:[recv].sDictDeleteLastAndGet(:[args]) ==> :[recv].sDictDeleteFirstAndGet(:[args])
+:[recv].iDictGetNext(:[args]) ==> :[recv].iDictGetPrev(:[args])
+:[recv].iDictGetPrev(:[args]) ==> :[recv].iDictGetNext(:[args])
+:[recv].uDictGetNext(:[args]) ==> :[recv].uDictGetPrev(:[args])
+:[recv].uDictGetPrev(:[args]) ==> :[recv].uDictGetNext(:[args])
+:[recv].sDictGetNext(:[args]) ==> :[recv].sDictGetPrev(:[args])
+:[recv].sDictGetPrev(:[args]) ==> :[recv].sDictGetNext(:[args])
+:[recv].iDictGetNextOrEqual(:[args]) ==> :[recv].iDictGetPrevOrEqual(:[args])
+:[recv].iDictGetPrevOrEqual(:[args]) ==> :[recv].iDictGetNextOrEqual(:[args])
+:[recv].uDictGetNextOrEqual(:[args]) ==> :[recv].uDictGetPrevOrEqual(:[args])
+:[recv].uDictGetPrevOrEqual(:[args]) ==> :[recv].uDictGetNextOrEqual(:[args])
+:[recv].sDictGetNextOrEqual(:[args]) ==> :[recv].sDictGetPrevOrEqual(:[args])
+:[recv].sDictGetPrevOrEqual(:[args]) ==> :[recv].sDictGetNextOrEqual(:[args])
 stringCrc32(:[s]) ==> stringCrc16(:[s])
 stringCrc16(:[s]) ==> stringCrc32(:[s])
 stringSha256_32(:[s]) ==> stringSha256(:[s])
 stringSha256(:[s]) ==> stringSha256_32(:[s])
 StringBuilder.create().append(:[a]).append(:[b]).build() ==> StringBuilder.create().append(:[b]).append(:[a]).build()
+SEND_MODE_REGULAR ==> SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE
+SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> SEND_MODE_REGULAR
+SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> SEND_MODE_CARRY_ALL_BALANCE
+SEND_MODE_CARRY_ALL_BALANCE ==> SEND_MODE_REGULAR
+SEND_MODE_CARRY_ALL_BALANCE ==> SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE
+SEND_MODE_ESTIMATE_FEE_ONLY ==> 0
 SEND_MODE_IGNORE_ERRORS ==> 0
 SEND_MODE_PAY_FEES_SEPARATELY ==> 0
 SEND_MODE_BOUNCE_ON_ACTION_FAIL ==> 0
-SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> SEND_MODE_CARRY_ALL_BALANCE
-SEND_MODE_CARRY_ALL_BALANCE ==> SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE
-SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> 0
-SEND_MODE_CARRY_ALL_BALANCE ==> 0
+SEND_MODE_DESTROY ==> 0
+RESERVE_MODE_EXACT_AMOUNT ==> RESERVE_MODE_ALL_BUT_AMOUNT
+RESERVE_MODE_ALL_BUT_AMOUNT ==> RESERVE_MODE_EXACT_AMOUNT
 RESERVE_MODE_AT_MOST ==> RESERVE_MODE_EXACT_AMOUNT
 RESERVE_MODE_EXACT_AMOUNT ==> RESERVE_MODE_AT_MOST
+RESERVE_MODE_INCREASE_BY_ORIGINAL_BALANCE ==> 0
+RESERVE_MODE_NEGATE_AMOUNT ==> 0
+RESERVE_MODE_BOUNCE_ON_ACTION_FAIL ==> 0
+
+:[msg].send(0) ==> :[msg].send(64)
+:[msg].send(1) ==> :[msg].send(0)
+:[msg].send(2) ==> :[msg].send(0)
+:[msg].send(16) ==> :[msg].send(0)
+:[msg].send(32) ==> :[msg].send(0)
+:[msg].send(64) ==> :[msg].send(0)
+:[msg].send(64) ==> :[msg].send(128)
+:[msg].send(128) ==> :[msg].send(0)
+:[msg].send(128) ==> :[msg].send(64)
+:[msg].send(1024) ==> :[msg].send(0)
+:[msg].sendAndEstimateFee(0) ==> :[msg].sendAndEstimateFee(64)
+:[msg].sendAndEstimateFee(1) ==> :[msg].sendAndEstimateFee(0)
+:[msg].sendAndEstimateFee(2) ==> :[msg].sendAndEstimateFee(0)
+:[msg].sendAndEstimateFee(16) ==> :[msg].sendAndEstimateFee(0)
+:[msg].sendAndEstimateFee(32) ==> :[msg].sendAndEstimateFee(0)
+:[msg].sendAndEstimateFee(64) ==> :[msg].sendAndEstimateFee(0)
+:[msg].sendAndEstimateFee(64) ==> :[msg].sendAndEstimateFee(128)
+:[msg].sendAndEstimateFee(128) ==> :[msg].sendAndEstimateFee(0)
+:[msg].sendAndEstimateFee(128) ==> :[msg].sendAndEstimateFee(64)
+:[msg].sendAndEstimateFee(1024) ==> :[msg].sendAndEstimateFee(0)
+:[msg].estimateFeeWithoutSending(0) ==> :[msg].estimateFeeWithoutSending(64)
+:[msg].estimateFeeWithoutSending(1) ==> :[msg].estimateFeeWithoutSending(0)
+:[msg].estimateFeeWithoutSending(2) ==> :[msg].estimateFeeWithoutSending(0)
+:[msg].estimateFeeWithoutSending(16) ==> :[msg].estimateFeeWithoutSending(0)
+:[msg].estimateFeeWithoutSending(32) ==> :[msg].estimateFeeWithoutSending(0)
+:[msg].estimateFeeWithoutSending(64) ==> :[msg].estimateFeeWithoutSending(0)
+:[msg].estimateFeeWithoutSending(64) ==> :[msg].estimateFeeWithoutSending(128)
+:[msg].estimateFeeWithoutSending(128) ==> :[msg].estimateFeeWithoutSending(0)
+:[msg].estimateFeeWithoutSending(128) ==> :[msg].estimateFeeWithoutSending(64)
+:[msg].estimateFeeWithoutSending(1024) ==> :[msg].estimateFeeWithoutSending(0)
+sendRawMessage(:[msg], 0) ==> sendRawMessage(:[msg], 64)
+sendRawMessage(:[msg], 1) ==> sendRawMessage(:[msg], 0)
+sendRawMessage(:[msg], 2) ==> sendRawMessage(:[msg], 0)
+sendRawMessage(:[msg], 16) ==> sendRawMessage(:[msg], 0)
+sendRawMessage(:[msg], 32) ==> sendRawMessage(:[msg], 0)
+sendRawMessage(:[msg], 64) ==> sendRawMessage(:[msg], 0)
+sendRawMessage(:[msg], 64) ==> sendRawMessage(:[msg], 128)
+sendRawMessage(:[msg], 128) ==> sendRawMessage(:[msg], 0)
+sendRawMessage(:[msg], 128) ==> sendRawMessage(:[msg], 64)
+sendRawMessage(:[msg], 1024) ==> sendRawMessage(:[msg], 0)
+reserveToncoinsOnBalance(:[amount], 0) ==> reserveToncoinsOnBalance(:[amount], 1)
+reserveToncoinsOnBalance(:[amount], 2) ==> reserveToncoinsOnBalance(:[amount], 0)
+reserveToncoinsOnBalance(:[amount], 0) ==> reserveToncoinsOnBalance(:[amount], 2)
+reserveToncoinsOnBalance(:[amount], 1) ==> reserveToncoinsOnBalance(:[amount], 0)
+reserveExtraCurrenciesOnBalance(:[amount], :[extra], 0) ==> reserveExtraCurrenciesOnBalance(:[amount], :[extra], 1)
+reserveExtraCurrenciesOnBalance(:[amount], :[extra], 2) ==> reserveExtraCurrenciesOnBalance(:[amount], :[extra], 0)
+reserveExtraCurrenciesOnBalance(:[amount], :[extra], 0) ==> reserveExtraCurrenciesOnBalance(:[amount], :[extra], 2)
+reserveExtraCurrenciesOnBalance(:[amount], :[extra], 1) ==> reserveExtraCurrenciesOnBalance(:[amount], :[extra], 0)
+value: 0 ==> value: 1
+value: 1 ==> value: 0
+value: ton(:[amount]) ==> value: 0
+value: :[fn](:[args]) ==> value: 0
 
 BounceMode.NoBounce ==> BounceMode.RichBounce
 BounceMode.Only256BitsOfBody ==> BounceMode.RichBounce

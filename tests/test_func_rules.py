@@ -53,6 +53,7 @@ class TestFuncRules(TestCase):
             "  var refs = slice_refs(s);\n",
             "  var bits = slice_bits(s);\n",
             "  var empty = slice_empty?(s);\n",
+            "  var dempty = slice_data_empty?(s);\n",
             "  var rempty = slice_refs_empty?(s);\n",
             "  var brefs = builder_refs(b);\n",
             "  var bbits = builder_bits(b);\n",
@@ -84,6 +85,9 @@ class TestFuncRules(TestCase):
             "  var sa = slice_at(t, 0);\n",
             "  var ta = tuple_at(t, 0);\n",
             "  var ga = at(t, 0);\n",
+            "  accept_message();\n",
+            "  commit();\n",
+            "  set_code(c);\n",
             "  throw_arg_if(1, 2, 3);\n",
             "  throw_arg_unless(1, 2, 3);\n",
             "}\n",
@@ -134,7 +138,11 @@ class TestFuncRules(TestCase):
         self.assertIn("  var refs = slice_bits(s);", mutant_lines)
         self.assertIn("  var bits = slice_refs(s);", mutant_lines)
         self.assertIn("  var empty = slice_refs_empty?(s);", mutant_lines)
+        self.assertIn("  var empty = slice_data_empty?(s);", mutant_lines)
+        self.assertIn("  var dempty = slice_empty?(s);", mutant_lines)
+        self.assertIn("  var dempty = slice_refs_empty?(s);", mutant_lines)
         self.assertIn("  var rempty = slice_empty?(s);", mutant_lines)
+        self.assertIn("  var rempty = slice_data_empty?(s);", mutant_lines)
         self.assertIn("  var brefs = builder_bits(b);", mutant_lines)
         self.assertIn("  var bbits = builder_refs(b);", mutant_lines)
 
@@ -169,6 +177,7 @@ class TestFuncRules(TestCase):
         self.assertIn("  var sa = tuple_at(t, 0);", mutant_lines)
         self.assertIn("  var ta = int_at(t, 0);", mutant_lines)
         self.assertIn("  var ga = tuple_at(t, 0);", mutant_lines)
+        self.assertIn("  ;", mutant_lines)
         self.assertIn("  throw_arg_if(1, 2, 3);", mutant_lines)
         self.assertIn("  throw_arg_unless(1, 2, 3);", mutant_lines)
 
