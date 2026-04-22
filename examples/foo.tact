@@ -117,7 +117,7 @@ contract MutationHarness {
         let fieldOk = sender() == self.owner;
         let fieldBad = sender() != self.owner;
         let adminOk = self.admin == sender();
-        let adminBad = self.admin != sbeginer();
+        let adminBad = self.admin != sender();
         let addrOk = myAddress() == target;
         let addrBad = myAddress() != target;
         let balance = myBalance();
