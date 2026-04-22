@@ -16,12 +16,6 @@
 /\* ==> SKIP_MUTATING_REST
 
 # --------------------------------
-# Broad statement replacement
-# LEGACY / HIGHER-NOISE
-# --------------------------------
-(^\s*)(\S+[^{}]+.*)\n ==> \1throw(0);\n
-
-# --------------------------------
 # Boolean literals and Tact guard primitives
 # LOW-NOISE / REGEX-SAFE
 # --------------------------------

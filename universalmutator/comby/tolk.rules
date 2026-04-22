@@ -4,13 +4,42 @@
 # - universal.rules already provides most operator/number mutations.
 # - These rules mirror conservative Tolk-specific surface-syntax edits.
 
-//:[comment] ==> DO_NOT_MUTATE
 /*:[comment]*/ ==> DO_NOT_MUTATE
 
 import :[rest] ==> DO_NOT_MUTATE
 
 true ==> false
 false ==> true
+:[lhs]+=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]+=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]+=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]&=:[rhs] ==> :[lhs]|=:[rhs]
+:[lhs]&=:[rhs] ==> :[lhs]^=:[rhs]
+:[lhs]|=:[rhs] ==> :[lhs]&=:[rhs]
+:[lhs]|=:[rhs] ==> :[lhs]^=:[rhs]
+:[lhs]^=:[rhs] ==> :[lhs]&=:[rhs]
+:[lhs]^=:[rhs] ==> :[lhs]|=:[rhs]
+:[lhs]<<=:[rhs] ==> :[lhs]>>=:[rhs]
+:[lhs]>>=:[rhs] ==> :[lhs]<<=:[rhs]
+:[lhs]<<:[rhs] ==> :[lhs]>>:[rhs]
+:[lhs]>>:[rhs] ==> :[lhs]<<:[rhs]
+:[lhs]^:[rhs] ==> :[lhs]&:[rhs]
+:[lhs]^:[rhs] ==> :[lhs]|:[rhs]
+:[lhs]&:[rhs] ==> :[lhs]^:[rhs]
+:[lhs]|:[rhs] ==> :[lhs]^:[rhs]
+while (:[cond]) ==> while (0==1)
+while(:[cond]) ==> while(0==1)
+break ==> continue
+continue ==> break
 :[lhs] is :[rhs] ==> :[lhs] !is :[rhs]
 :[lhs] !is :[rhs] ==> :[lhs] is :[rhs]
 
@@ -20,21 +49,20 @@ get fun :[rest] ==> fun :[rest]
 @noinline ==> @inline
 @inline_ref ==> @inline
 @pure ==> 
-@method_id(:[id]) ==> @method_id(0)
 mutate self ==> self
 mutate :[param]: :[type] ==> :[param]: :[type]
 fun :[name](:[before], :[arg]: :[type] = :[default], :[after]) ==> fun :[name](:[before], :[arg]: :[type], :[after])
 fun :[name](:[arg]: :[type] = :[default], :[after]) ==> fun :[name](:[arg]: :[type], :[after])
 fun :[name](:[before], :[arg]: :[type] = :[default]) ==> fun :[name](:[before], :[arg]: :[type])
 
-uint:[n] ==> int:[n]
-int:[n] ==> uint:[n]
+uint:[n~(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-6])] ==> int:[n]
+int:[n~(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-6])] ==> uint:[n]
 varuint16 ==> varint16
 varint16 ==> varuint16
 varuint32 ==> varint32
 varint32 ==> varuint32
-as uint:[n] ==> as int:[n]
-as int:[n] ==> as uint:[n]
+as uint:[n~(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-6])] ==> as int:[n]
+as int:[n~(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-6])] ==> as uint:[n]
 assert (:[cond]) throw :[err] ==> if (:[cond]) throw :[err]
 :[expr]! ==> :[expr]
 throwIfOpcodeDoesNotMatch: :[err] ==> throwIfOpcodeDoesNotMatch: 63
@@ -169,7 +197,6 @@ stringCrc32(:[s]) ==> stringCrc16(:[s])
 stringCrc16(:[s]) ==> stringCrc32(:[s])
 stringSha256_32(:[s]) ==> stringSha256(:[s])
 stringSha256(:[s]) ==> stringSha256_32(:[s])
-StringBuilder.create().append(:[a]).append(:[b]).build() ==> StringBuilder.create().append(:[b]).append(:[a]).build()
 SEND_MODE_REGULAR ==> SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE
 SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> SEND_MODE_REGULAR
 SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE ==> SEND_MODE_CARRY_ALL_BALANCE
@@ -245,5 +272,5 @@ BounceMode.NoBounce ==> BounceMode.RichBounce
 BounceMode.Only256BitsOfBody ==> BounceMode.RichBounce
 BounceMode.RichBounceOnlyRootCell ==> BounceMode.RichBounce
 
-struct (:[opcode]) :[name] { ==> struct (0x00000000) :[name] {
-struct (:[opcode]) :[name] { ==> struct (0xFFFFFFFF) :[name] {
+struct (:[opcode~(?:0x[0-9A-Fa-f]+|0b[01]+)]) :[name] { ==> struct (0x00000000) :[name] {
+struct (:[opcode~(?:0x[0-9A-Fa-f]+|0b[01]+)]) :[name] { ==> struct (0xFFFFFFFF) :[name] {

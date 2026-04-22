@@ -11,9 +11,6 @@
 true ==> false
 false ==> true
 
-# Comment replacement already covered by c_like.rules; add error replacement here.
-(^\s*)(\S+[^{}]+.*)\n ==> \1throw 0xFFFF;\n
-
 # Arithmetic assignment operator shuffle (muton AAOS).
 \+= ==> -=
 \+= ==> *=
@@ -73,7 +70,6 @@ while(\(.*\)) ==> while(0==1)
 ^(\s*)@noinline\b ==> \1@inline
 ^(\s*)@inline_ref\b ==> \1@inline
 ^(\s*)@pure\b ==> \1
-^(\s*)@method_id\s*\(\s*[^)\n]+\s*\) ==> \1@method_id(0)
 
 # Strip mutability from instance receivers.
 \bmutate\s+self\b ==> self

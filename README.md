@@ -66,8 +66,8 @@ Fortran
 Solidity
 Vyper
 Fe
-FunC
 Tolk
+FunC
 Tact
 ```
 

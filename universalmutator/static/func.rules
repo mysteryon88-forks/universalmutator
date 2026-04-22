@@ -14,9 +14,6 @@ THROW_UNLESS ==> THROW_IF
 # Comment replacement (muton CR).
 (^\s*)(\S+[^{}]+.*)\n ==> \1;; \2\n
 
-# Error replacement (muton ER).
-(^\s*)(\S+[^{}]+.*)\n ==> \1throw(0);\n
-
 # Boolean literal flip (muton BL).
 true ==> false
 false ==> true

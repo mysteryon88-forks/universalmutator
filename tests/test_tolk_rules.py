@@ -128,7 +128,6 @@ class TestTolkRules(TestCase):
         self.assertIn("fun CounterIncrement.bump(self): self {", mutant_lines)
         self.assertIn("@noinline", mutant_lines)
         self.assertIn("@inline", mutant_lines)
-        self.assertIn("@method_id(0)", mutant_lines)
         self.assertIn("fun inlineFn(a: int, delta: int): int {", mutant_lines)
         self.assertIn("fun helper(cs: slice, mutate amount: int, target: Cell<address>?, body: slice) {", mutant_lines)
         self.assertIn("fun helper(mutate cs: slice, amount: int, target: Cell<address>?, body: slice) {", mutant_lines)
@@ -227,4 +226,3 @@ class TestTolkRules(TestCase):
         self.assertIn("        continue;", mutant_lines)
         self.assertIn("        break;", mutant_lines)
         self.assertIn("    while (0==1) {", mutant_lines)
-        self.assertIn("    throw 0xFFFF;", mutant_lines)

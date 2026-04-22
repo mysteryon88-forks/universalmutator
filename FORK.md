@@ -275,3 +275,7 @@ muton run contracts_Tolk/01_jetton/jetton-wallet-contract.tolk
 mutate examples/foo.fc func --mutantDir tmp/foo --swap
 mutate examples/foo.sol solidity --mutantDir tmp/solid --swap
 ```
+
+```sh
+python -m universalmutator.genmutants examples/foo.fc func --only func.rules --mutantDir examples/func *> examples/func/check.out; python -m universalmutator.genmutants examples/foo.tolk tolk --only tolk.rules --mutantDir examples/tolk *> examples/tolk/check.out
+```

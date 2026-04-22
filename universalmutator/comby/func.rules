@@ -1,12 +1,37 @@
 # FunC (TON) comby rules.
 
 ;;:[comment] ==> DO_NOT_MUTATE
-{-:[comment]-} ==> DO_NOT_MUTATE
 
 #include :[rest] ==> DO_NOT_MUTATE
 
 true ==> false
 false ==> true
+:[lhs]+=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]+=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]+=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]&=:[rhs] ==> :[lhs]|=:[rhs]
+:[lhs]&=:[rhs] ==> :[lhs]^=:[rhs]
+:[lhs]|=:[rhs] ==> :[lhs]&=:[rhs]
+:[lhs]|=:[rhs] ==> :[lhs]^=:[rhs]
+:[lhs]^=:[rhs] ==> :[lhs]&=:[rhs]
+:[lhs]^=:[rhs] ==> :[lhs]|=:[rhs]
+:[lhs]<<=:[rhs] ==> :[lhs]>>=:[rhs]
+:[lhs]>>=:[rhs] ==> :[lhs]<<=:[rhs]
+:[lhs]<<:[rhs] ==> :[lhs]>>:[rhs]
+:[lhs]>>:[rhs] ==> :[lhs]<<:[rhs]
+:[lhs]^:[rhs] ==> :[lhs]&:[rhs]
+:[lhs]^:[rhs] ==> :[lhs]|:[rhs]
+:[lhs]&:[rhs] ==> :[lhs]^:[rhs]
+:[lhs]|:[rhs] ==> :[lhs]^:[rhs]
 throw_if(:[x]) ==> throw_unless(:[x])
 throw_unless(:[x]) ==> throw_if(:[x])
 throw_arg_if(:[arg], :[err], :[cond]) ==> throw_arg_unless(:[arg], :[err], :[cond])
@@ -66,6 +91,8 @@ ifnot (:[cond]) ==> ifnot (0==1)
 ifnot(:[cond]) ==> ifnot(0==1)
 ifnot (:[cond]) ==> ifnot (1==1)
 ifnot(:[cond]) ==> ifnot(1==1)
+while (:[cond]) ==> while (0==1)
+while(:[cond]) ==> while(0==1)
 until (:[cond]) ==> until (0==1)
 until(:[cond]) ==> until(0==1)
 repeat (:[count]) ==> repeat (0)

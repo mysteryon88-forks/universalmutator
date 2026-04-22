@@ -255,4 +255,3 @@ class TestFuncRules(TestCase):
         self.assertIn("  bb.store_uint(0, 8);", mutant_lines)
         self.assertIn("  store_uint(bb, 0, 16);", mutant_lines)
         self.assertIn("  ;; doSomething();", mutant_lines)
-        self.assertIn("  throw(0);", mutant_lines)

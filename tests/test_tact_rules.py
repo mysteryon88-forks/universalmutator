@@ -90,7 +90,6 @@ class TestTactRules(TestCase):
         self.assertIn("    true ?  a  :  b;", mutant_lines)
         self.assertIn("    throwUnless(cond);", mutant_lines)
         self.assertIn("    throwIf(cond);", mutant_lines)
-        self.assertIn("    throw(0);", mutant_lines)
 
     def test_merged_tact_rules_cover_transferred_tact_specific_mutations(self):
         source = [
