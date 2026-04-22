@@ -345,11 +345,6 @@ def main():
         "rust",
         "solidity",
         "go",
-
-        # TON languages have C-like syntax (especially Tolk)
-        "tolk",
-        "tact",
-        "func"
     ]
 
     try:
@@ -380,22 +375,25 @@ def main():
             if language.lower() in handlers:
                 language = language.lower()
 
-        if language in cLikeLanguages:
-            otherRules.append("c_like.rules")
+        if language in ["tact", "func", "tolk"]:
+            rules = ["ton_common.rules", language + ".rules"] + otherRules
+        else:
+            if language in cLikeLanguages:
+                otherRules.append("c_like.rules")
 
-        if language == "vyper":
-            otherRules.append("python.rules")
-            otherRules.append("solidity.rules")
+            if language == "vyper":
+                otherRules.append("python.rules")
+                otherRules.append("solidity.rules")
 
-        if language == "fe":
-            otherRules.append("python.rules")
-            otherRules.append("solidity.rules")
+            if language == "fe":
+                otherRules.append("python.rules")
+                otherRules.append("solidity.rules")
 
-        rules = ["universal.rules", language + ".rules"] + otherRules
-        if fuzz:
-            if language == "none":
-                fuzzRules = ["universal.rules", "c_like.rules", "python.rules", "vyper.rules", "solidity.rules"]
-                rules = list(set(fuzzRules + rules))
+            rules = ["universal.rules", language + ".rules"] + otherRules
+            if fuzz:
+                if language == "none":
+                    fuzzRules = ["universal.rules", "c_like.rules", "python.rules", "vyper.rules", "solidity.rules"]
+                    rules = list(set(fuzzRules + rules))
     else:
         onlyPos = args.index("--only")
         rules = [args[onlyPos + 1]]

@@ -1,0 +1,53 @@
+# Shared TON comby mutations used by Tact, FunC, and Tolk by default.
+#
+# These mirror the conservative common regex families from static/ton_common.rules.
+
+true ==> false
+false ==> true
+
+:[lhs] == :[rhs] ==> :[lhs] != :[rhs]
+:[lhs] != :[rhs] ==> :[lhs] == :[rhs]
+:[lhs] <= :[rhs] ==> :[lhs] < :[rhs]
+:[lhs] <= :[rhs] ==> :[lhs] == :[rhs]
+:[lhs] >= :[rhs] ==> :[lhs] > :[rhs]
+:[lhs] >= :[rhs] ==> :[lhs] == :[rhs]
+
+:[lhs] && :[rhs] ==> :[lhs] || :[rhs]
+:[lhs] || :[rhs] ==> :[lhs] && :[rhs]
+
+if (:[cond]) ==> if (!(:[cond]))
+if(:[cond]) ==> if(!(:[cond]))
+if (:[cond]) ==> if (0==1)
+if(:[cond]) ==> if(0==1)
+if (:[cond]) ==> if (1==1)
+if(:[cond]) ==> if(1==1)
+while (:[cond]) ==> while (0==1)
+while(:[cond]) ==> while(0==1)
+
+break; ==> continue;
+continue; ==> break;
+
+:[lhs]+=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]+=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]+=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]*=:[rhs]
+:[lhs]-=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]*=:[rhs] ==> :[lhs]/=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]+=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]-=:[rhs]
+:[lhs]/=:[rhs] ==> :[lhs]*=:[rhs]
+
+:[lhs]&=:[rhs] ==> :[lhs]|=:[rhs]
+:[lhs]&=:[rhs] ==> :[lhs]^=:[rhs]
+:[lhs]|=:[rhs] ==> :[lhs]&=:[rhs]
+:[lhs]|=:[rhs] ==> :[lhs]^=:[rhs]
+:[lhs]^=:[rhs] ==> :[lhs]&=:[rhs]
+:[lhs]^=:[rhs] ==> :[lhs]|=:[rhs]
+
+:[lhs]<<=:[rhs] ==> :[lhs]>>=:[rhs]
+:[lhs]>>=:[rhs] ==> :[lhs]<<=:[rhs]
+:[lhs]<<:[rhs] ==> :[lhs]>>:[rhs]
+:[lhs]>>:[rhs] ==> :[lhs]<<:[rhs]

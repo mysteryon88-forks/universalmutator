@@ -1,0 +1,63 @@
+# Shared TON regex mutations used by Tact, FunC, and Tolk by default.
+#
+# This ruleset intentionally keeps only syntax-safe common families.
+# It replaces the previous TON default of blindly layering
+# universal.rules + c_like.rules on top of language-specific rules.
+
+# Boolean literal flip.
+\btrue\b ==> false
+\bfalse\b ==> true
+
+# Safe comparison swaps that do not touch generic/type angle brackets.
+(?<![<>=!])==(?!=) ==> !=
+!=(?!=) ==> ==
+(?<!<)<=(?!=) ==> <
+(?<!<)<=(?!=) ==> ==
+(?<!>)>=(?!=) ==> >
+(?<!>)>=(?!=) ==> ==
+
+# Logical operator swap.
+&& ==> ||
+\|\| ==> &&
+
+# Conditional forcing.
+if (\(.*\)) ==> if (!\1)
+if(\(.*\)) ==> if(!\1)
+if (\(.*\)) ==> if (0==1)
+if(\(.*\)) ==> if(0==1)
+if (\(.*\)) ==> if (1==1)
+if(\(.*\)) ==> if(1==1)
+while (\(.*\)) ==> while (0==1)
+while(\(.*\)) ==> while(0==1)
+
+# Statement-only loop control swap.
+(^\s*)break(\s*;) ==> \1continue\2
+(^\s*)continue(\s*;) ==> \1break\2
+
+# Arithmetic assignment operator shuffle.
+\+= ==> -=
+\+= ==> *=
+\+= ==> /=
+-= ==> +=
+-= ==> *=
+-= ==> /=
+\*= ==> +=
+\*= ==> -=
+\*= ==> /=
+/= ==> +=
+/= ==> -=
+/= ==> *=
+
+# Bitwise assignment operator shuffle.
+\&= ==> |=
+\&= ==> ^=
+\|= ==> &=
+\|= ==> ^=
+\^= ==> &=
+\^= ==> |=
+
+# Shift assignment/operator shuffle.
+<<= ==> >>=
+>>= ==> <<=
+<<(?!=) ==> >>
+>>(?!=) ==> <<

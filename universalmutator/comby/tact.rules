@@ -1,8 +1,8 @@
 # Tact (TON) comby rules.
 #
 # Notes:
-# - universal.rules and c_like.rules already cover most generic operator-level
-#   mutations for --comby runs.
+# - ton_common.rules now provides the shared TON-safe operator/control-flow
+#   families for default --comby runs.
 # - This file keeps Tact-specific mutations aligned with static/tact.rules where
 #   Comby patterns are syntax-aware and straightforward.
 
@@ -46,8 +46,8 @@ until (:[cond]) ==> until (0==1)
 until(:[cond]) ==> until(0==1)
 repeat (:[count]) ==> repeat (0)
 repeat(:[count]) ==> repeat(0)
-break ==> continue
-continue ==> break
+break; ==> continue;
+continue; ==> break;
 throwIf(:[x]) ==> throwUnless(:[x])
 throwUnless(:[x]) ==> throwIf(:[x])
 :[expr]!! ==> :[expr]

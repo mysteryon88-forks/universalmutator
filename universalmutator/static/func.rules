@@ -105,8 +105,8 @@ repeat (\(.*\)) ==> repeat (0)
 repeat(\(.*\)) ==> repeat(0)
 
 # Loop control swap (muton LC).
-\bbreak\b ==> continue
-\bcontinue\b ==> break
+(^\s*)break(\s*;) ==> \1continue\2
+(^\s*)continue(\s*;) ==> \1break\2
 
 # Mutate documented function specifiers.
 \binline_ref\b ==> inline

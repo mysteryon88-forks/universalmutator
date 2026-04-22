@@ -9,6 +9,17 @@ class TestTonCombyRuleAlignment(TestCase):
         mutator.parseRules([filename], comby=True)
         return (Path("universalmutator/comby") / filename).read_text(encoding="utf-8")
 
+    def test_ton_common_comby_rules_cover_shared_ton_defaults(self):
+        text = self._read_comby_rules("ton_common.rules")
+
+        self.assertIn(":[lhs] == :[rhs] ==> :[lhs] != :[rhs]", text)
+        self.assertIn(":[lhs] && :[rhs] ==> :[lhs] || :[rhs]", text)
+        self.assertIn("if (:[cond]) ==> if (!(:[cond]))", text)
+        self.assertIn("while (:[cond]) ==> while (0==1)", text)
+        self.assertIn("break; ==> continue;", text)
+        self.assertIn(":[lhs]+=:[rhs] ==> :[lhs]-=:[rhs]", text)
+        self.assertIn(":[lhs]<<:[rhs] ==> :[lhs]>>:[rhs]", text)
+
     def test_tact_comby_rules_track_added_static_families(self):
         text = self._read_comby_rules("tact.rules")
 
@@ -19,7 +30,7 @@ class TestTonCombyRuleAlignment(TestCase):
         self.assertIn("while (:[cond]) ==> while (0==1)", text)
         self.assertIn("until (:[cond]) ==> until (0==1)", text)
         self.assertIn("repeat (:[count]) ==> repeat (0)", text)
-        self.assertIn("break ==> continue", text)
+        self.assertIn("break; ==> continue;", text)
         self.assertIn("throw(:[code~\\d+]); ==> throw(0);", text)
         self.assertIn("message(0x:[opcode~[0-9a-fA-F]{8}]) ==> message(0xFFFFFFFF)", text)
         self.assertIn("randomInt() ==> getSeed()", text)

@@ -57,7 +57,7 @@ fun dict.uDictGetLast(self, keyBits: int) {
     return keyBits;
 }
 
-fun dict.iDictDeleteFirstAndGet(self, keyBits: int) {
+fun dict.uDictDeleteFirstAndGet(self, keyBits: int) {
     return keyBits;
 }
 

@@ -13,7 +13,9 @@ C:\Users\ssobolev\Documents\GitHub\Forks\universalmutator
 Итоговый успешный запуск:
 
 ```sh
-python -m universalmutator.genmutants examples/foo.fc func --only func.rules --mutantDir examples/func *> examples/func/check.out
+New-Item -ItemType Directory -Force examples/func | Out-Null; python -m universalmutator.genmutants examples/foo.fc func --only func.rules --mutantDir examples/func *> examples/func/check.out
+
+New-Item -ItemType Directory -Force examples/func_all | Out-Null; python -m universalmutator.genmutants examples/foo.fc func --mutantDir examples/func_all *> examples/func_all/check.out
 ```
 
 Промежуточный первый запуск той же команды с коротким таймаутом был прерван по времени.
@@ -23,7 +25,9 @@ python -m universalmutator.genmutants examples/foo.fc func --only func.rules --m
 Итоговый успешный запуск:
 
 ```sh
-python -m universalmutator.genmutants examples/foo.tact tact --only tact.rules --mutantDir examples/tact *> examples/tact/check.out
+New-Item -ItemType Directory -Force examples/tact | Out-Null; python -m universalmutator.genmutants examples/foo.tact tact --only tact.rules --mutantDir examples/tact *> examples/tact/check.out
+
+New-Item -ItemType Directory -Force examples/tact_all | Out-Null; python -m universalmutator.genmutants examples/foo.tact tact --mutantDir examples/tact_all *> examples/tact_all/check.out
 ```
 
 ### Tolk
@@ -31,41 +35,7 @@ python -m universalmutator.genmutants examples/foo.tact tact --only tact.rules -
 Итоговый успешный запуск:
 
 ```sh
-python -m universalmutator.genmutants examples/foo.tolk tolk --only tolk.rules --mutantDir examples/tolk *> examples/tolk/check.out
-```
+New-Item -ItemType Directory -Force examples/tolk | Out-Null; python -m universalmutator.genmutants examples/foo.tolk tolk --only tolk.rules --mutantDir examples/tolk *> examples/tolk/check.out
 
-## Повторные команды, которые тоже вызывались
-
-Повторный запуск FunC после первого таймаута:
-
-```sh
-python -m universalmutator.genmutants examples/foo.fc func --only func.rules --mutantDir examples/func *> examples/func/check.out
-```
-
-Объединённый повторный запуск FunC и Tolk одной командой:
-
-```sh
-python -m universalmutator.genmutants examples/foo.fc func --only func.rules --mutantDir examples/func *> examples/func/check.out; python -m universalmutator.genmutants examples/foo.tolk tolk --only tolk.rules --mutantDir examples/tolk *> examples/tolk/check.out
-```
-
-Финальный отдельный повторный запуск Tolk:
-
-```sh
-python -m universalmutator.genmutants examples/foo.tolk tolk --only tolk.rules --mutantDir examples/tolk *> examples/tolk/check.out
-```
-
-## Куда пишется результат
-
-```sh
-examples/func
-examples/tact
-examples/tolk
-```
-
-Логи запусков пишутся в:
-
-```sh
-examples/func/check.out
-examples/tact/check.out
-examples/tolk/check.out
+New-Item -ItemType Directory -Force examples/tolk_all | Out-Null; python -m universalmutator.genmutants examples/foo.tolk tolk --mutantDir examples/tolk_all *> examples/tolk_all/check.out
 ```

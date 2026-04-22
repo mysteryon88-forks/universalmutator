@@ -1,7 +1,8 @@
 # Tolk (TON) comby rules.
 #
 # Notes:
-# - universal.rules already provides most operator/number mutations.
+# - ton_common.rules now provides the shared TON-safe operator/control-flow
+#   families for default --comby runs.
 # - These rules mirror conservative Tolk-specific surface-syntax edits.
 
 /*:[comment]*/ ==> DO_NOT_MUTATE
@@ -38,8 +39,8 @@ false ==> true
 :[lhs]|:[rhs] ==> :[lhs]^:[rhs]
 while (:[cond]) ==> while (0==1)
 while(:[cond]) ==> while(0==1)
-break ==> continue
-continue ==> break
+break; ==> continue;
+continue; ==> break;
 :[lhs] is :[rhs] ==> :[lhs] !is :[rhs]
 :[lhs] !is :[rhs] ==> :[lhs] is :[rhs]
 

@@ -1,7 +1,8 @@
 # Tact mutation rules - merged main ruleset.
 #
 # Notes:
-# - universal.rules already provides many generic arithmetic/number mutations.
+# - ton_common.rules now provides the shared TON-safe operator/control-flow
+#   families for default runs.
 # - This file keeps Tact-specific rules plus retained legacy mutations that are
 #   useful for standalone `--only tact.rules` runs.
 # - Rules from tact1.rules are merged here; duplicate rule lines are removed.
@@ -124,8 +125,8 @@ until (\(.*\)) ==> until (0==1)
 until(\(.*\)) ==> until(0==1)
 repeat (\(.*\)) ==> repeat (0)
 repeat(\(.*\)) ==> repeat(0)
-\bbreak\b ==> continue
-\bcontinue\b ==> break
+(^\s*)break(\s*;) ==> \1continue\2
+(^\s*)continue(\s*;) ==> \1break\2
 
 # --------------------------------
 # Ternary branch forcing

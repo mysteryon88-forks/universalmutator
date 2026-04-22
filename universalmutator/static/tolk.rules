@@ -1,7 +1,8 @@
 # Tolk (TON) rules.
 #
 # Notes:
-# - universal.rules already provides most operator/number mutations.
+# - ton_common.rules now provides the shared TON-safe operator/control-flow
+#   families for default runs.
 # - Here we keep Tolk-specific mutations anchored to documented syntax.
 
 ^\s*import\s ==> DO_NOT_MUTATE
@@ -48,8 +49,8 @@ false ==> true
 ([^|])\|([^|]) ==> \1^\2
 
 # Loop control swap (muton LC).
-\bbreak\b ==> continue
-\bcontinue\b ==> break
+(^\s*)break(\s*;) ==> \1continue\2
+(^\s*)continue(\s*;) ==> \1break\2
 
 # While False (muton WF).
 while (\(.*\)) ==> while (0==1)
