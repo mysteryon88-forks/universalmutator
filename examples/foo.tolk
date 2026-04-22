@@ -268,7 +268,7 @@ fun stdlibOps(c: cell, other: cell, dest: address) {
     var externalKind = dest.isExternal();
     var firstSigned = loadedDict.iDictGetFirst(256);
     var lastUnsigned = loadedDict.uDictGetLast(256);
-    var deletedSigned = loadedDict.iDictDeleteFirstAndGet(256);
+    var deletedSigned = loadedDict.uDictDeleteFirstAndGet(256);
     var deletedUnsigned = loadedDict.uDictDeleteLastAndGet(256);
     var nextSigned = loadedDict.iDictGetNextOrEqual(256, 1);
     var prevSigned = loadedDict.iDictGetPrevOrEqual(256, 1);
