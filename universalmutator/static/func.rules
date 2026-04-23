@@ -11,7 +11,7 @@ throw_arg_unless ==> throw_arg_if
 THROW_IF ==> THROW_UNLESS
 THROW_UNLESS ==> THROW_IF
 
-# Comment replacement (muton CR).
+# Comment replacement.
 ^(?![ \t]*(?:[{}.]|#|;;|\(|(?:else|if|ifnot|while|repeat|do|until|return|const|global|forall|int|cell|slice|builder|tuple|cont|var)\b|.*[{}].*))([ \t]*)(.*\S.*;\s*)\n ==> \1;; \2\n
 
 # Shared boolean/operator/control-flow families live in ton_common.rules.
@@ -22,13 +22,13 @@ THROW_UNLESS ==> THROW_IF
 (^\s*)if (\(.*\)) ==> \1if (1)
 (^\s*)if(\(.*\)) ==> \1if(1)
 
-# Bitwise operator shuffle with XOR (muton BOS).
+# Bitwise operator shuffle with XOR.
 ([^\^])\^(?![/%])([^\^]) ==> \1&\2
 ([^\^])\^(?![/%])([^\^]) ==> \1|\2
 ([^&])&([^&]) ==> \1^\2
 ([^|])\|([^|]) ==> \1^\2
 
-# Division assignment operator shuffle (muton DAOS).
+# Division assignment operator shuffle.
 (?<![~^])/= ==> ~/=
 (?<![~^])/= ==> ^/=
 ~/= ==> /=
@@ -36,7 +36,7 @@ THROW_UNLESS ==> THROW_IF
 \^/= ==> /=
 \^/= ==> ~/=
 
-# Division operator shuffle (muton DOS).
+# Division operator shuffle
 ([^*/~^])/([^*/]) ==> \1~/\2
 ([^*/~^])/([^*/]) ==> \1^/\2
 ~/(?![=]) ==> /
@@ -44,7 +44,7 @@ THROW_UNLESS ==> THROW_IF
 \^/(?![=]) ==> /
 \^/(?![=]) ==> ~/
 
-# Modulo assignment operator shuffle (muton MAOS).
+# Modulo assignment operator shuffle.
 (?<![~^])%= ==> ~%=
 (?<![~^])%= ==> ^%=
 ~%= ==> %=
@@ -52,7 +52,7 @@ THROW_UNLESS ==> THROW_IF
 \^%= ==> %=
 \^%= ==> ~%=
 
-# Modulo operator shuffle (muton MOS).
+# Modulo operator shuffle.
 (?<![~^])%(?![=]) ==> ~%
 (?<![~^])%(?![=]) ==> ^%
 ~%(?![=]) ==> %
@@ -60,17 +60,17 @@ THROW_UNLESS ==> THROW_IF
 \^%(?![=]) ==> %
 \^%(?![=]) ==> ~%
 
-# If Not False/True (muton INF/INT).
+# If Not False/True.
 ifnot (\(.*\)) ==> ifnot (0)
 ifnot(\(.*\)) ==> ifnot(0)
 ifnot (\(.*\)) ==> ifnot (1)
 ifnot(\(.*\)) ==> ifnot(1)
 
-# Until False (muton UF).
+# Until False 
 until (\(.*\)) ==> until (0)
 until(\(.*\)) ==> until(0)
 
-# Repeat Zero (muton RZ).
+# Repeat Zero.
 repeat (\(.*\)) ==> repeat (0)
 repeat(\(.*\)) ==> repeat(0)
 
@@ -113,7 +113,7 @@ repeat(\(.*\)) ==> repeat(0)
 \bstore_uint\b ==> store_int
 \bstore_int\b ==> store_uint
 
-# Store coins/int/uint as zero (muton SC/SI/SU).
+# Store coins/int/uint as zero.
 (\.store_coins\s*\()\s*[^,\)]+ ==> \g<1>0
 (\.store_grams\s*\()\s*[^,\)]+ ==> \g<1>0
 (\.store_uint\s*\()\s*[^,\)]+ ==> \g<1>0

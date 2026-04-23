@@ -16,7 +16,7 @@
 ^\s*\*.* ==> DO_NOT_MUTATE
 /\* ==> SKIP_MUTATING_REST
 
-# Comment replacement (muton CR). Keep it to standalone statements, not declarations or continuations.
+# Comment replacement. Keep it to standalone statements, not declarations or continuations.
 ^(?![ \t]*(?:[{}.]|#|//|/\*|\*|@|(?:else|if|while|repeat|do|until|try|catch|return|fun|get|extends|contract|trait|message|struct|receive|external|bounced|init|let|const|var)\b|[A-Za-z_]\w*\s*:|.*[{}].*))([ \t]*)((?:break|continue)\s*;|(?:throw|throwIf|throwUnless|nativeThrow|nativeThrowIf|nativeThrowUnless|require)\s*\([^;\n]*\)\s*;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*(?:<<=|>>=|[+\-*/%&|^]?=)\s*[^;\n]+;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*\([^;\n]*\)\s*;)\s*\n ==> \1// \2\n
 
 # --------------------------------

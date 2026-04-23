@@ -10,7 +10,7 @@
 
 /\* ==> SKIP_MUTATING_REST
 
-# Comment replacement (muton CR). Keep it to standalone statements, not declarations or continuations.
+# Comment replacement. Keep it to standalone statements, not declarations or continuations.
 ^(?![ \t]*(?:[{}.]|#|//|/\*|\*|@|(?:else|if|while|repeat|do|match|try|catch|return|fun|get|struct|enum|type|const|global|var|val)\b|[A-Za-z_]\w*\s*:|.*[{}].*))([ \t]*)((?:break|continue)\s*;|assert\s*\([^;\n]*\)\s*throw\s+[^;\n]+;|throw\s+[^;\n]+;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*(?:<<=|>>=|[+\-*/%&|^]?=)\s*[^;\n]+;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*\([^;\n]*\)\s*;)\s*\n ==> \1// \2\n
 
 # Shared boolean/operator/control-flow families live in ton_common.rules.
@@ -23,7 +23,7 @@
 \bif (?!\(.*(?:\bis\b|!is\b).*\))\(.*\) ==> if (true)
 \bif(?!\(.*(?:\bis\b|!is\b).*\))\(.*\) ==> if(true)
 
-# Bitwise operator shuffle with XOR (muton BOS).
+# Bitwise operator shuffle with XOR
 ([^\^])\^([^\^]) ==> \1&\2
 ([^\^])\^([^\^]) ==> \1|\2
 ([^&])&([^&]) ==> \1^\2
