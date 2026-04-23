@@ -4,7 +4,8 @@
 # - ton_common.rules now provides the shared TON-safe operator/control-flow
 #   families for default --comby runs.
 # - This file keeps Tact-specific mutations aligned with static/tact.rules where
-#   Comby patterns are syntax-aware and straightforward.
+#   Comby patterns are syntax-aware and straightforward. Shared TON families
+#   should stay in ton_common.rules to avoid dead duplicate rules in default runs.
 
 //:[comment] ==> DO_NOT_MUTATE
 ///:[comment] ==> DO_NOT_MUTATE
@@ -12,42 +13,23 @@
 
 import :[rest] ==> DO_NOT_MUTATE
 
-true ==> false
-false ==> true
-:[lhs]+=:[rhs] ==> :[lhs]-=:[rhs]
-:[lhs]+=:[rhs] ==> :[lhs]*=:[rhs]
-:[lhs]+=:[rhs] ==> :[lhs]/=:[rhs]
-:[lhs]-=:[rhs] ==> :[lhs]+=:[rhs]
-:[lhs]-=:[rhs] ==> :[lhs]*=:[rhs]
-:[lhs]-=:[rhs] ==> :[lhs]/=:[rhs]
-:[lhs]*=:[rhs] ==> :[lhs]+=:[rhs]
-:[lhs]*=:[rhs] ==> :[lhs]-=:[rhs]
-:[lhs]*=:[rhs] ==> :[lhs]/=:[rhs]
-:[lhs]/=:[rhs] ==> :[lhs]+=:[rhs]
-:[lhs]/=:[rhs] ==> :[lhs]-=:[rhs]
-:[lhs]/=:[rhs] ==> :[lhs]*=:[rhs]
-:[lhs]&=:[rhs] ==> :[lhs]|=:[rhs]
-:[lhs]&=:[rhs] ==> :[lhs]^=:[rhs]
-:[lhs]|=:[rhs] ==> :[lhs]&=:[rhs]
-:[lhs]|=:[rhs] ==> :[lhs]^=:[rhs]
-:[lhs]^=:[rhs] ==> :[lhs]&=:[rhs]
-:[lhs]^=:[rhs] ==> :[lhs]|=:[rhs]
-:[lhs]<<=:[rhs] ==> :[lhs]>>=:[rhs]
-:[lhs]>>=:[rhs] ==> :[lhs]<<=:[rhs]
-:[lhs]<<:[rhs] ==> :[lhs]>>:[rhs]
-:[lhs]>>:[rhs] ==> :[lhs]<<:[rhs]
+# Line-anchored comment replacement stays regex-only; this Comby layer has no
+# safe line-scope guard for declaration/control-flow exclusions.
+
+if (:[cond]) ==> if (!(:[cond]))
+if(:[cond]) ==> if(!(:[cond]))
+if (:[cond]) ==> if (false)
+if(:[cond]) ==> if(false)
+if (:[cond]) ==> if (true)
+if(:[cond]) ==> if(true)
 :[lhs]^:[rhs] ==> :[lhs]&:[rhs]
 :[lhs]^:[rhs] ==> :[lhs]|:[rhs]
 :[lhs]&:[rhs] ==> :[lhs]^:[rhs]
 :[lhs]|:[rhs] ==> :[lhs]^:[rhs]
-while (:[cond]) ==> while (0==1)
-while(:[cond]) ==> while(0==1)
 until (:[cond]) ==> until (0==1)
 until(:[cond]) ==> until(0==1)
 repeat (:[count]) ==> repeat (0)
 repeat(:[count]) ==> repeat(0)
-break; ==> continue;
-continue; ==> break;
 throwIf(:[x]) ==> throwUnless(:[x])
 throwUnless(:[x]) ==> throwIf(:[x])
 :[expr]!! ==> :[expr]

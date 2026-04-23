@@ -105,8 +105,8 @@ class TestFuncRules(TestCase):
         self.assertIn("int refFn(int a) inline {", mutant_lines)
         self.assertIn("int refFn(int a)  {", mutant_lines)
         self.assertIn("int impureFn()  {", mutant_lines)
-        self.assertIn("int get_counter() method_id(0) {", mutant_lines)
-        self.assertIn("int get_counter2() method_id(0) {", mutant_lines)
+        self.assertNotIn("int get_counter() method_id(0) {", mutant_lines)
+        self.assertNotIn("int get_counter2() method_id(0) {", mutant_lines)
 
         self.assertIn("  var lr = preload_ref(s);", mutant_lines)
         self.assertIn("  var pr = load_ref(s);", mutant_lines)
@@ -200,6 +200,8 @@ class TestFuncRules(TestCase):
             "  var x = a ^ 1;\n",
             "  var y = a & 1;\n",
             "  var z = a | 1;\n",
+            "  if (cond) {\n",
+            "  }\n",
             "  ifnot (cond) {\n",
             "    break;\n",
             "  }\n",
@@ -226,7 +228,7 @@ class TestFuncRules(TestCase):
 
         mutants = mutator.mutants_regexp(
             source,
-            ruleFiles=["func.rules"],
+            ruleFiles=["ton_common.rules", "func.rules"],
             ignorePatterns=[],
         )
         mutant_lines = {mutant[1].rstrip() for mutant in mutants}
@@ -241,10 +243,14 @@ class TestFuncRules(TestCase):
         self.assertIn("  var fval = true;", mutant_lines)
         self.assertIn("  var x = a & 1;", mutant_lines)
         self.assertIn("  var y = a ^ 1;", mutant_lines)
+        self.assertIn("  if (0) {", mutant_lines)
+        self.assertIn("  if (1) {", mutant_lines)
+        self.assertIn("  ifnot (0) {", mutant_lines)
+        self.assertIn("  ifnot (1) {", mutant_lines)
         self.assertIn("    continue;", mutant_lines)
         self.assertIn("    break;", mutant_lines)
-        self.assertIn("  while (0==1) {", mutant_lines)
-        self.assertIn("  until (0==1) {", mutant_lines)
+        self.assertIn("  while (false) {", mutant_lines)
+        self.assertIn("  until (0) {", mutant_lines)
         self.assertIn("  repeat (0) {", mutant_lines)
         self.assertIn("  var diva = a ~/ b;", mutant_lines)
         self.assertIn("  a ~/= b;", mutant_lines)
@@ -255,3 +261,10 @@ class TestFuncRules(TestCase):
         self.assertIn("  bb.store_uint(0, 8);", mutant_lines)
         self.assertIn("  store_uint(bb, 0, 16);", mutant_lines)
         self.assertIn("  ;; doSomething();", mutant_lines)
+        self.assertNotIn(";; int muton_ops(int a, int b, builder bb) {", mutant_lines)
+        self.assertNotIn("  ;; if (cond) {", mutant_lines)
+        self.assertNotIn("  ;; ifnot (cond) {", mutant_lines)
+        self.assertNotIn("  ;; while (cond) {", mutant_lines)
+        self.assertNotIn("  ;; repeat (count) {", mutant_lines)
+        self.assertNotIn("  ;; var tval = true;", mutant_lines)
+        self.assertNotIn("  ;; return a;", mutant_lines)

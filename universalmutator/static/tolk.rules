@@ -6,55 +6,28 @@
 # - Here we keep Tolk-specific mutations anchored to documented syntax.
 
 ^\s*import\s ==> DO_NOT_MUTATE
+^\s*//.* ==> DO_NOT_MUTATE
 
 /\* ==> SKIP_MUTATING_REST
 
-true ==> false
-false ==> true
+# Comment replacement (muton CR). Keep it to standalone statements, not declarations or continuations.
+^(?![ \t]*(?:[{}.]|#|//|/\*|\*|@|(?:else|if|while|repeat|do|match|try|catch|return|fun|get|struct|enum|type|const|global|var|val)\b|[A-Za-z_]\w*\s*:|.*[{}].*))([ \t]*)((?:break|continue)\s*;|assert\s*\([^;\n]*\)\s*throw\s+[^;\n]+;|throw\s+[^;\n]+;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*(?:<<=|>>=|[+\-*/%&|^]?=)\s*[^;\n]+;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*\([^;\n]*\)\s*;)\s*\n ==> \1// \2\n
 
-# Arithmetic assignment operator shuffle (muton AAOS).
-\+= ==> -=
-\+= ==> *=
-\+= ==> /=
--= ==> +=
--= ==> *=
--= ==> /=
-\*= ==> +=
-\*= ==> -=
-\*= ==> /=
-/= ==> +=
-/= ==> -=
-/= ==> *=
+# Shared boolean/operator/control-flow families live in ton_common.rules.
 
-# Bitwise assignment operator shuffle (muton BAOS).
-\&= ==> |=
-\&= ==> ^=
-\|= ==> &=
-\|= ==> ^=
-\^= ==> &=
-\^= ==> |=
-
-# Shift assignment operator shuffle (muton SAOS).
-<<= ==> >>=
->>= ==> <<=
-
-# Shift operator shuffle (muton SOS).
-<<(?!=) ==> >>
->>(?!=) ==> <<
+# Tolk conditional forcing. Skip `is` / `!is` type guards to preserve narrowing.
+\bif (?!\(.*(?:\bis\b|!is\b).*\))(\(.*\)) ==> if (!\1)
+\bif(?!\(.*(?:\bis\b|!is\b).*\))(\(.*\)) ==> if(!\1)
+\bif (?!\(.*(?:\bis\b|!is\b).*\))\(.*\) ==> if (false)
+\bif(?!\(.*(?:\bis\b|!is\b).*\))\(.*\) ==> if(false)
+\bif (?!\(.*(?:\bis\b|!is\b).*\))\(.*\) ==> if (true)
+\bif(?!\(.*(?:\bis\b|!is\b).*\))\(.*\) ==> if(true)
 
 # Bitwise operator shuffle with XOR (muton BOS).
 ([^\^])\^([^\^]) ==> \1&\2
 ([^\^])\^([^\^]) ==> \1|\2
 ([^&])&([^&]) ==> \1^\2
 ([^|])\|([^|]) ==> \1^\2
-
-# Loop control swap (muton LC).
-(^\s*)break(\s*;) ==> \1continue\2
-(^\s*)continue(\s*;) ==> \1break\2
-
-# While False (muton WF).
-while (\(.*\)) ==> while (0==1)
-while(\(.*\)) ==> while(0==1)
 
 # Tolk unions support `is` / `!is` runtime checks.
 (?<![!\w])is\b ==> !is
@@ -98,8 +71,7 @@ while(\(.*\)) ==> while(0==1)
 \bas\s+uint([1-9]\d?|1\d\d|2[0-4]\d|25[0-6])\b ==> as int\1
 \bas\s+int([1-9]\d?|1\d\d|2[0-4]\d|25[0-6])\b ==> as uint\1
 
-# Mutate documented assert/throw and deserialization options.
-(^\s*)assert\s*\((.+)\)\s*throw\s+([^;\n]+)(;?) ==> \1if (\2) throw \3\4
+# Mutate documented deserialization options.
 (\bthrowIfOpcodeDoesNotMatch\s*:\s*)[\w]+ ==> \g<1>63
 
 # Relax documented non-null assertion.
@@ -111,12 +83,12 @@ while(\(.*\)) ==> while(0==1)
 \bblockchain\.currentBlockLogicalTime\b ==> blockchain.logicalTime
 \bcalculateSizeStrict\b ==> calculateSize
 \bcalculateSize\b ==> calculateSizeStrict
-\bcalculateForwardFeeWithoutLumpPrice\b ==> calculateForwardFee
-\bcalculateForwardFee\b ==> calculateForwardFeeWithoutLumpPrice
-\bcalculateGasFeeWithoutFlatPrice\b ==> calculateGasFee
-\bcalculateGasFee\b ==> calculateGasFeeWithoutFlatPrice
-\bacceptExternalMessage\b ==> commitContractDataAndActions
-\bcommitContractDataAndActions\b ==> acceptExternalMessage
+^(?!\s*fun\b)(.*)\bcalculateForwardFeeWithoutLumpPrice\b ==> \1calculateForwardFee
+^(?!\s*fun\b)(.*)\bcalculateForwardFee\b ==> \1calculateForwardFeeWithoutLumpPrice
+^(?!\s*fun\b)(.*)\bcalculateGasFeeWithoutFlatPrice\b ==> \1calculateGasFee
+^(?!\s*fun\b)(.*)\bcalculateGasFee\b ==> \1calculateGasFeeWithoutFlatPrice
+^(?!\s*fun\b)(.*)\bacceptExternalMessage\b ==> \1commitContractDataAndActions
+^(?!\s*fun\b)(.*)\bcommitContractDataAndActions\b ==> \1acceptExternalMessage
 \brandom\.uint256\b ==> random.getSeed
 \brandom\.getSeed\b ==> random.uint256
 
@@ -151,28 +123,28 @@ while(\(.*\)) ==> while(0==1)
 \.getLastBits\s*\( ==> .getFirstBits(
 
 # Mutate documented address/message/payment helpers.
-\.getStorageDuePayment\s*\( ==> .getStoragePaidPayment(
-\.getStoragePaidPayment\s*\( ==> .getStorageDuePayment(
-\.sendAndEstimateFee\s*\( ==> .estimateFeeWithoutSending(
-\.estimateFeeWithoutSending\s*\( ==> .sendAndEstimateFee(
-\.isInternal\s*\( ==> .isExternal(
-\.isExternal\s*\( ==> .isInternal(
-\.loadMessageOp\s*\( ==> .loadMessageQueryId(
-\.loadMessageQueryId\s*\( ==> .loadMessageOp(
-\.storeMessageOp\s*\( ==> .storeMessageQueryId(
-\.storeMessageQueryId\s*\( ==> .storeMessageOp(
+^(?!\s*fun\b)(.*)\.getStorageDuePayment\s*\( ==> \1.getStoragePaidPayment(
+^(?!\s*fun\b)(.*)\.getStoragePaidPayment\s*\( ==> \1.getStorageDuePayment(
+^(?!\s*fun\b)(.*)\.sendAndEstimateFee\s*\( ==> \1.estimateFeeWithoutSending(
+^(?!\s*fun\b)(.*)\.estimateFeeWithoutSending\s*\( ==> \1.sendAndEstimateFee(
+^(?!\s*fun\b)(.*)\.isInternal\s*\( ==> \1.isExternal(
+^(?!\s*fun\b)(.*)\.isExternal\s*\( ==> \1.isInternal(
+^(?!\s*fun\b)(.*)\.loadMessageOp\s*\( ==> \1.loadMessageQueryId(
+^(?!\s*fun\b)(.*)\.loadMessageQueryId\s*\( ==> \1.loadMessageOp(
+^(?!\s*fun\b)(.*)\.storeMessageOp\s*\( ==> \1.storeMessageQueryId(
+^(?!\s*fun\b)(.*)\.storeMessageQueryId\s*\( ==> \1.storeMessageOp(
 
 # Mutate documented low-level TVM dictionary helpers.
-\.iDict(Get|Set|SetRef|SetIfNotExists|SetIfExists|GetRef|GetRefOrNull|Delete|SetAndGet|SetAndGetRefOrNull|DeleteAndGet|SetBuilder|SetBuilderIfNotExists|SetBuilderIfExists|DeleteFirstAndGet|DeleteLastAndGet|GetFirst|GetFirstAsRef|GetLast|GetLastAsRef|GetNext|GetNextOrEqual|GetPrev|GetPrevOrEqual)\s*\( ==> .uDict\1(
-\.uDict(Get|Set|SetRef|SetIfNotExists|SetIfExists|GetRef|GetRefOrNull|Delete|SetAndGet|SetAndGetRefOrNull|DeleteAndGet|SetBuilder|SetBuilderIfNotExists|SetBuilderIfExists|DeleteFirstAndGet|DeleteLastAndGet|GetFirst|GetFirstAsRef|GetLast|GetLastAsRef|GetNext|GetNextOrEqual|GetPrev|GetPrevOrEqual)\s*\( ==> .iDict\1(
-\.((?:i|u|s)Dict)GetFirst(AsRef)?\s*\( ==> .\g<1>GetLast\g<2>(
-\.((?:i|u|s)Dict)GetLast(AsRef)?\s*\( ==> .\g<1>GetFirst\g<2>(
-\.((?:i|u|s)Dict)DeleteFirstAndGet\s*\( ==> .\g<1>DeleteLastAndGet(
-\.((?:i|u|s)Dict)DeleteLastAndGet\s*\( ==> .\g<1>DeleteFirstAndGet(
-\.((?:i|u|s)Dict)GetNextOrEqual\s*\( ==> .\g<1>GetPrevOrEqual(
-\.((?:i|u|s)Dict)GetPrevOrEqual\s*\( ==> .\g<1>GetNextOrEqual(
-\.((?:i|u|s)Dict)GetNext\s*\( ==> .\g<1>GetPrev(
-\.((?:i|u|s)Dict)GetPrev\s*\( ==> .\g<1>GetNext(
+^(?!\s*fun\b)(.*)\.iDict(Get|Set|SetRef|SetIfNotExists|SetIfExists|GetRef|GetRefOrNull|Delete|SetAndGet|SetAndGetRefOrNull|DeleteAndGet|SetBuilder|SetBuilderIfNotExists|SetBuilderIfExists|DeleteFirstAndGet|DeleteLastAndGet|GetFirst|GetFirstAsRef|GetLast|GetLastAsRef|GetNext|GetNextOrEqual|GetPrev|GetPrevOrEqual)\s*\( ==> \1.uDict\2(
+^(?!\s*fun\b)(.*)\.uDict(Get|Set|SetRef|SetIfNotExists|SetIfExists|GetRef|GetRefOrNull|Delete|SetAndGet|SetAndGetRefOrNull|DeleteAndGet|SetBuilder|SetBuilderIfNotExists|SetBuilderIfExists|DeleteFirstAndGet|DeleteLastAndGet|GetFirst|GetFirstAsRef|GetLast|GetLastAsRef|GetNext|GetNextOrEqual|GetPrev|GetPrevOrEqual)\s*\( ==> \1.iDict\2(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)GetFirst(AsRef)?\s*\( ==> \1.\g<2>GetLast\g<3>(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)GetLast(AsRef)?\s*\( ==> \1.\g<2>GetFirst\g<3>(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)DeleteFirstAndGet\s*\( ==> \1.\g<2>DeleteLastAndGet(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)DeleteLastAndGet\s*\( ==> \1.\g<2>DeleteFirstAndGet(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)GetNextOrEqual\s*\( ==> \1.\g<2>GetPrevOrEqual(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)GetPrevOrEqual\s*\( ==> \1.\g<2>GetNextOrEqual(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)GetNext\s*\( ==> \1.\g<2>GetPrev(
+^(?!\s*fun\b)(.*)\.((?:i|u|s)Dict)GetPrev\s*\( ==> \1.\g<2>GetNext(
 
 # Mutate documented compile-time string helpers.
 \bstringCrc32\s*\( ==> stringCrc16(

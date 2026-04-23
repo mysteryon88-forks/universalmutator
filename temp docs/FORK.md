@@ -121,57 +121,6 @@ func-js -h
 New-Item -ItemType Directory -Force tmp, tmp\mutants_tact, tmp\mutants_tolk, tmp\mutants_func | Out-Null
 ```
 
-### Tact
-
-Рекомендуемая команда:
-
-```sh
-mutate examples/foo.tact tact --mutantDir tmp/mutants_tact
-```
-
-Почему именно так:
-
-- handler использует только `exit code`
-- `tact --check` на Windows стабильнее, чем single-file сборка с относительным `--output`
-
-### Tolk
-
-По умолчанию handler сам запускает compile-check из каталога исходника, поэтому `import` продолжают нормально резолвиться.
-
-```sh
-mutate examples/foo.tolk tolk --mutantDir tmp/mutants_tolk
-```
-
-### FunC
-
-По умолчанию handler сам запускает `func-js` из каталога исходника, чтобы не ломать относительные `#include`.
-
-```sh
-mutate examples/foo.fc func --mutantDir tmp/mutants_func
-```
-
-Если нужен нестандартный compile-check, можно переопределить его через переменные окружения:
-
-```sh
-$env:UM_TACT_CMD='tact --check MUTANT'
-$env:UM_TOLK_CMD='npx -y @ton/tolk-js --output-json tmp/tolk-out.json MUTANT'
-$env:UM_FUNC_CMD='npx -y @ton-community/func-js MUTANT --fift tmp/func-out.fif'
-```
-
-То же самое можно сделать разово через `--cmd`.
-
-Если в команде есть `MUTANT`, UniversalMutator подставит путь к временному файлу мутанта.
-Если `MUTANT` нет, UniversalMutator временно подменит исходный файл на месте и запустит команду над фиксированным путём.
-
-Примеры:
-
-```sh
-mutate examples/foo.tolk tolk --cmd "my-tolk-wrapper MUTANT" --mutantDir tmp/mutants_tolk
-mutate examples/foo.fc func --cmd "my-func-compiler check examples/foo.fc" --mutantDir tmp/mutants_func
-```
-
-Если кастомная команда не является настоящей compile-check командой и может возвращать `0` даже для синтаксически сломанного кода, добавь `--noFastCheck`.
-
 ## Команды
 
 ### `mutate`

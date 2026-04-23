@@ -12,45 +12,19 @@ THROW_IF ==> THROW_UNLESS
 THROW_UNLESS ==> THROW_IF
 
 # Comment replacement (muton CR).
-(^\s*)(\S+[^{}]+.*)\n ==> \1;; \2\n
+^(?![ \t]*(?:[{}.]|#|;;|\(|(?:else|if|ifnot|while|repeat|do|until|return|const|global|forall|int|cell|slice|builder|tuple|cont|var)\b|.*[{}].*))([ \t]*)(.*\S.*;\s*)\n ==> \1;; \2\n
 
-# Boolean literal flip (muton BL).
-true ==> false
-false ==> true
+# Shared boolean/operator/control-flow families live in ton_common.rules.
 
-# Arithmetic assignment operator shuffle (muton AAOS).
-\+= ==> -=
-\+= ==> *=
-\+= ==> /=
--= ==> +=
--= ==> *=
--= ==> /=
-\*= ==> +=
-\*= ==> -=
-\*= ==> /=
-/= ==> +=
-/= ==> -=
-/= ==> *=
-
-# Bitwise assignment operator shuffle (muton BAOS).
-\&= ==> |=
-\&= ==> ^=
-\|= ==> &=
-\|= ==> ^=
-\^= ==> &=
-\^= ==> |=
-
-# Shift assignment operator shuffle (muton SAOS).
-<<= ==> >>=
->>= ==> <<=
-
-# Shift operator shuffle (muton SOS).
-<<(?!=) ==> >>
->>(?!=) ==> <<
+# FunC conditional forcing. Anchor to real statements so throw_if calls are safe.
+(^\s*)if (\(.*\)) ==> \1if (0)
+(^\s*)if(\(.*\)) ==> \1if(0)
+(^\s*)if (\(.*\)) ==> \1if (1)
+(^\s*)if(\(.*\)) ==> \1if(1)
 
 # Bitwise operator shuffle with XOR (muton BOS).
-([^\^])\^([^\^]) ==> \1&\2
-([^\^])\^([^\^]) ==> \1|\2
+([^\^])\^(?![/%])([^\^]) ==> \1&\2
+([^\^])\^(?![/%])([^\^]) ==> \1|\2
 ([^&])&([^&]) ==> \1^\2
 ([^|])\|([^|]) ==> \1^\2
 
@@ -87,26 +61,18 @@ false ==> true
 \^%(?![=]) ==> ~%
 
 # If Not False/True (muton INF/INT).
-ifnot (\(.*\)) ==> ifnot (0==1)
-ifnot(\(.*\)) ==> ifnot(0==1)
-ifnot (\(.*\)) ==> ifnot (1==1)
-ifnot(\(.*\)) ==> ifnot(1==1)
-
-# While False (muton WF).
-while (\(.*\)) ==> while (0==1)
-while(\(.*\)) ==> while(0==1)
+ifnot (\(.*\)) ==> ifnot (0)
+ifnot(\(.*\)) ==> ifnot(0)
+ifnot (\(.*\)) ==> ifnot (1)
+ifnot(\(.*\)) ==> ifnot(1)
 
 # Until False (muton UF).
-until (\(.*\)) ==> until (0==1)
-until(\(.*\)) ==> until(0==1)
+until (\(.*\)) ==> until (0)
+until(\(.*\)) ==> until(0)
 
 # Repeat Zero (muton RZ).
 repeat (\(.*\)) ==> repeat (0)
 repeat(\(.*\)) ==> repeat(0)
-
-# Loop control swap (muton LC).
-(^\s*)break(\s*;) ==> \1continue\2
-(^\s*)continue(\s*;) ==> \1break\2
 
 # Mutate documented function specifiers.
 \binline_ref\b ==> inline
@@ -114,8 +80,6 @@ repeat(\(.*\)) ==> repeat(0)
 \binline_ref\b ==> 
 \binline\b ==> 
 \bimpure\b ==> 
-\bmethod_id\s*\(\s*[^)\n]+\s*\) ==> method_id(0)
-\bmethod_id\b(?!\s*\() ==> method_id(0)
 
 # Mutate documented gas/state management helpers.
 (^\s*)accept_message\s*\(\s*\)\s*; ==> \1;
@@ -130,17 +94,17 @@ repeat(\(.*\)) ==> repeat(0)
 \bget_seed\s*\( ==> random(
 
 # Mutate documented slice/cell load helpers.
-\bload_ref\s*\( ==> preload_ref(
+(?<!~)\bload_ref\s*\( ==> preload_ref(
 \bpreload_ref\s*\( ==> load_ref(
-\bload_dict\s*\( ==> preload_dict(
+(?<!~)\bload_dict\s*\( ==> preload_dict(
 \bpreload_dict\s*\( ==> load_dict(
-\bload_maybe_ref\s*\( ==> preload_maybe_ref(
+(?<!~)\bload_maybe_ref\s*\( ==> preload_maybe_ref(
 \bpreload_maybe_ref\s*\( ==> load_maybe_ref(
-\bload_int\s*\( ==> preload_int(
+(?<!~)\bload_int\s*\( ==> preload_int(
 \bpreload_int\s*\( ==> load_int(
-\bload_uint\s*\( ==> preload_uint(
+(?<!~)\bload_uint\s*\( ==> preload_uint(
 \bpreload_uint\s*\( ==> load_uint(
-\bload_bits\s*\( ==> preload_bits(
+(?<!~)\bload_bits\s*\( ==> preload_bits(
 \bpreload_bits\s*\( ==> load_bits(
 
 # Mutate documented integer load/store helpers.
@@ -156,8 +120,8 @@ repeat(\(.*\)) ==> repeat(0)
 (\.store_int\s*\()\s*[^,\)]+ ==> \g<1>0
 (\bstore_coins\s*\(\s*[^,]+,\s*)[^,\)]+ ==> \g<1>0
 (\bstore_grams\s*\(\s*[^,]+,\s*)[^,\)]+ ==> \g<1>0
-(\bstore_uint\s*\(\s*[^,]+,\s*)[^,]+ ==> \g<1>0
-(\bstore_int\s*\(\s*[^,]+,\s*)[^,]+ ==> \g<1>0
+((?<![\.~])\bstore_uint\s*\(\s*[^,\n]+,\s*)[^,\)\n]+(,\s*[^)\n]+\)) ==> \g<1>0\2
+((?<![\.~])\bstore_int\s*\(\s*[^,\n]+,\s*)[^,\)\n]+(,\s*[^)\n]+\)) ==> \g<1>0\2
 
 # Swap modifying vs non-modifying call notation for numeric built-ins.
 (\b[A-Za-z_]\w*)\.load_int\s*\( ==> \1~load_int(

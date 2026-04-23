@@ -112,7 +112,7 @@ class TestTolkRules(TestCase):
 
         mutants = mutator.mutants_regexp(
             source,
-            ruleFiles=["tolk.rules"],
+            ruleFiles=["ton_common.rules", "tolk.rules"],
             ignorePatterns=[],
         )
         mutant_lines = {mutant[1].rstrip() for mutant in mutants}
@@ -131,7 +131,6 @@ class TestTolkRules(TestCase):
         self.assertIn("fun inlineFn(a: int, delta: int): int {", mutant_lines)
         self.assertIn("fun helper(cs: slice, mutate amount: int, target: Cell<address>?, body: slice) {", mutant_lines)
         self.assertIn("fun helper(mutate cs: slice, amount: int, target: Cell<address>?, body: slice) {", mutant_lines)
-        self.assertIn("    if (amount > 0) throw ERR;", mutant_lines)
         self.assertIn("    var parsed = target;", mutant_lines)
         self.assertIn("    var msg = Allowed.fromSlice(body, { throwIfOpcodeDoesNotMatch: 63 });", mutant_lines)
         self.assertIn("fun currentCounter(): int {", mutant_lines)
@@ -202,13 +201,15 @@ class TestTolkRules(TestCase):
             "    while (cond) {\n",
             "        continue;\n",
             "    }\n",
+            "    sendRawMessage(msg,\n",
+            "        SEND_MODE_REGULAR);\n",
             "    doSomething();\n",
             "}\n",
         ]
 
         mutants = mutator.mutants_regexp(
             source,
-            ruleFiles=["tolk.rules"],
+            ruleFiles=["ton_common.rules", "tolk.rules"],
             ignorePatterns=[],
         )
         mutant_lines = {mutant[1].rstrip() for mutant in mutants}
@@ -223,6 +224,15 @@ class TestTolkRules(TestCase):
         self.assertIn("    var fval = true;", mutant_lines)
         self.assertIn("    var x = v & 1;", mutant_lines)
         self.assertIn("    var y = v ^ 1;", mutant_lines)
+        self.assertIn("    if (!(cond)) {", mutant_lines)
+        self.assertIn("    if (false) {", mutant_lines)
+        self.assertIn("    if (true) {", mutant_lines)
         self.assertIn("        continue;", mutant_lines)
         self.assertIn("        break;", mutant_lines)
-        self.assertIn("    while (0==1) {", mutant_lines)
+        self.assertIn("    while (false) {", mutant_lines)
+        self.assertIn("    // doSomething();", mutant_lines)
+        self.assertNotIn("// fun mutonOps() {", mutant_lines)
+        self.assertNotIn("    // if (cond) {", mutant_lines)
+        self.assertNotIn("    // while (cond) {", mutant_lines)
+        self.assertNotIn("    // var tval = true;", mutant_lines)
+        self.assertNotIn("        // SEND_MODE_REGULAR);", mutant_lines)

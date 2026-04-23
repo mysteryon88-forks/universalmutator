@@ -11,7 +11,7 @@ class TestTactRules(TestCase):
     def _mutants(self, source):
         return mutator.mutants_regexp(
             source,
-            ruleFiles=["tact.rules"],
+            ruleFiles=["ton_common.rules", "tact.rules"],
             ignorePatterns=[],
         )
 
@@ -25,15 +25,23 @@ class TestTactRules(TestCase):
         return by_line
 
     def test_tact_rules_file_has_no_duplicate_rule_lines(self):
-        rule_path = Path("universalmutator/static/tact.rules")
-        rule_lines = [
-            line.strip()
-            for line in rule_path.read_text(encoding="utf-8").splitlines()
-            if line.strip() and not line.lstrip().startswith("#")
-        ]
-        self.assertEqual(len(rule_lines), len(set(rule_lines)))
+        tact_path = Path("universalmutator/static/tact.rules")
+        common_path = Path("universalmutator/static/ton_common.rules")
 
-    def test_tact_specific_regex_rules_generate_expected_mutants(self):
+        def rule_lines(rule_path):
+            return [
+                line.strip()
+                for line in rule_path.read_text(encoding="utf-8").splitlines()
+                if line.strip() and not line.lstrip().startswith("#")
+            ]
+
+        tact_rule_lines = rule_lines(tact_path)
+        common_rule_lines = rule_lines(common_path)
+
+        self.assertEqual(len(tact_rule_lines), len(set(tact_rule_lines)))
+        self.assertFalse(set(tact_rule_lines) & set(common_rule_lines))
+
+    def test_tact_default_rules_generate_expected_mutants(self):
         source = [
             "fun main() {\n",
             "    a += 5;\n",
@@ -65,6 +73,8 @@ class TestTactRules(TestCase):
             "    var q = cond ? a : b;\n",
             "    throwIf(cond);\n",
             "    throwUnless(cond);\n",
+            "    sendRawMessage(msg,\n",
+            "        SendDefaultMode);\n",
             "    doSomething();\n",
             "}\n",
         ]
@@ -81,15 +91,24 @@ class TestTactRules(TestCase):
         self.assertIn("    var fval = true;", mutant_lines)
         self.assertIn("    var x = v & 1;", mutant_lines)
         self.assertIn("    var y = v ^ 1;", mutant_lines)
+        self.assertIn("    if (!(cond)) {", mutant_lines)
+        self.assertIn("    if (false) {", mutant_lines)
+        self.assertIn("    if (true) {", mutant_lines)
         self.assertIn("        continue;", mutant_lines)
         self.assertIn("        break;", mutant_lines)
-        self.assertIn("    while (0==1) {", mutant_lines)
+        self.assertIn("    while (false) {", mutant_lines)
         self.assertIn("    until (0==1) {", mutant_lines)
         self.assertIn("    repeat (0) {", mutant_lines)
         self.assertIn("    false ?  a  :  b;", mutant_lines)
         self.assertIn("    true ?  a  :  b;", mutant_lines)
         self.assertIn("    throwUnless(cond);", mutant_lines)
         self.assertIn("    throwIf(cond);", mutant_lines)
+        self.assertIn("    // doSomething();", mutant_lines)
+        self.assertNotIn("// fun main() {", mutant_lines)
+        self.assertNotIn("    // if (cond) {", mutant_lines)
+        self.assertNotIn("    // while (cond) {", mutant_lines)
+        self.assertNotIn("    // var tval = true;", mutant_lines)
+        self.assertNotIn("        // SendDefaultMode);", mutant_lines)
 
     def test_merged_tact_rules_cover_transferred_tact_specific_mutations(self):
         source = [
@@ -151,6 +170,7 @@ class TestTactRules(TestCase):
         self.assertIn("    let amount = payload as uint128;", mutant_lines)
         self.assertIn("    let amount = payload as int256;", mutant_lines)
         self.assertIn("field: Address;", mutant_lines)
+        self.assertNotIn("// field: Address?;", mutant_lines)
         self.assertIn("    let incoming = 0;", mutant_lines)
         self.assertIn("    if (0 > minValue) {}", mutant_lines)
         self.assertIn("    if (0 < deadline) {}", mutant_lines)

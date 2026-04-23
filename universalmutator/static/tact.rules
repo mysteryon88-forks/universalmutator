@@ -3,8 +3,8 @@
 # Notes:
 # - ton_common.rules now provides the shared TON-safe operator/control-flow
 #   families for default runs.
-# - This file keeps Tact-specific rules plus retained legacy mutations that are
-#   useful for standalone `--only tact.rules` runs.
+# - This file keeps Tact-specific rules. Shared TON families should stay in
+#   ton_common.rules to avoid dead duplicate rules in default runs.
 # - Rules from tact1.rules are merged here; duplicate rule lines are removed.
 
 # --------------------------------
@@ -16,15 +16,27 @@
 ^\s*\*.* ==> DO_NOT_MUTATE
 /\* ==> SKIP_MUTATING_REST
 
+# Comment replacement (muton CR). Keep it to standalone statements, not declarations or continuations.
+^(?![ \t]*(?:[{}.]|#|//|/\*|\*|@|(?:else|if|while|repeat|do|until|try|catch|return|fun|get|extends|contract|trait|message|struct|receive|external|bounced|init|let|const|var)\b|[A-Za-z_]\w*\s*:|.*[{}].*))([ \t]*)((?:break|continue)\s*;|(?:throw|throwIf|throwUnless|nativeThrow|nativeThrowIf|nativeThrowUnless|require)\s*\([^;\n]*\)\s*;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*(?:<<=|>>=|[+\-*/%&|^]?=)\s*[^;\n]+;|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*\([^;\n]*\)\s*;)\s*\n ==> \1// \2\n
+
 # --------------------------------
-# Boolean literals and Tact guard primitives
+# Tact guard primitives
 # LOW-NOISE / REGEX-SAFE
 # --------------------------------
-\btrue\b ==> false
-\bfalse\b ==> true
 \bthrowIf\b ==> throwUnless
 \bthrowUnless\b ==> throwIf
 !! ==> 
+
+# --------------------------------
+# Tact conditional forcing
+# LOW-NOISE / REGEX-SAFE
+# --------------------------------
+\bif (\(.*\)) ==> if (!\1)
+\bif(\(.*\)) ==> if(!\1)
+\bif (\(.*\)) ==> if (false)
+\bif(\(.*\)) ==> if(false)
+\bif (\(.*\)) ==> if (true)
+\bif(\(.*\)) ==> if(true)
 
 # --------------------------------
 # Tact debug and throw helpers
@@ -44,38 +56,13 @@
 \bnativeThrowUnless\b ==> nativeThrowIf
 
 # --------------------------------
-# Comparison operators
+# Tact-specific comparison operators
 # LOW-NOISE / REGEX-SAFE
 # --------------------------------
-(?<![<>=!])==(?!=) ==> !=
-!=(?!=) ==> ==
- <=  ==>  < 
- <=  ==>  == 
- >=  ==>  > 
- >=  ==>  == 
  <  ==>  <= 
  <  ==>  > 
  >  ==>  >= 
  >  ==>  < 
-==\s*null ==> != null
-!=\s*null ==> == null
-
-# --------------------------------
-# Arithmetic assignment operator shuffle
-# LEGACY / HIGHER-NOISE
-# --------------------------------
-\+= ==> -=
-\+= ==> *=
-\+= ==> /=
--= ==> +=
--= ==> *=
--= ==> /=
-\*= ==> +=
-\*= ==> -=
-\*= ==> /=
-/= ==> +=
-/= ==> -=
-/= ==> *=
 
 # --------------------------------
 # Arithmetic operators
@@ -86,27 +73,6 @@
 \*(?!=) ==> /
 /(?!=|\*|/) ==> *
 
-# --------------------------------
-# Bitwise assignment operator shuffle
-# LEGACY / MODERATE-NOISE
-# --------------------------------
-\&= ==> |=
-\&= ==> ^=
-\|= ==> &=
-\|= ==> ^=
-\^= ==> &=
-\^= ==> |=
-
-# --------------------------------
-# Shift assignment/operator shuffle
-# LEGACY / MODERATE-NOISE
-# --------------------------------
-<<= ==> >>=
->>= ==> <<=
-<<(?!=) ==> >>
->>(?!=) ==> <<
-
-# --------------------------------
 # Bitwise operators
 # MODERATE-NOISE / REGEX-SAFE
 # --------------------------------
@@ -116,17 +82,13 @@
 ([^|=])\|([^|=]) ==> \1^\2
 
 # --------------------------------
-# Loop reachability and control
+# Tact loop reachability
 # LEGACY / HIGHER-NOISE
 # --------------------------------
-while (\(.*\)) ==> while (0==1)
-while(\(.*\)) ==> while(0==1)
 until (\(.*\)) ==> until (0==1)
 until(\(.*\)) ==> until(0==1)
 repeat (\(.*\)) ==> repeat (0)
 repeat(\(.*\)) ==> repeat(0)
-(^\s*)break(\s*;) ==> \1continue\2
-(^\s*)continue(\s*;) ==> \1break\2
 
 # --------------------------------
 # Ternary branch forcing

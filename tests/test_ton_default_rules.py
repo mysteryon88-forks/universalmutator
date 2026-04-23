@@ -81,8 +81,8 @@ class TestTonDefaultRules(TestCase):
         )
         mutant_lines = {mutant[1].rstrip() for mutant in mutants}
 
-        self.assertIn("if (!(cond)) {", mutant_lines)
-        self.assertIn("if (0==1) {", mutant_lines)
+        self.assertNotIn("if (!(cond)) {", mutant_lines)
+        self.assertNotIn("if (0==1) {", mutant_lines)
         self.assertIn("    continue;", mutant_lines)
         self.assertIn("    break;", mutant_lines)
         self.assertIn("let both = left || right;", mutant_lines)
@@ -90,3 +90,4 @@ class TestTonDefaultRules(TestCase):
         self.assertIn("let ge = a > b;", mutant_lines)
         self.assertIn("count -= 1;", mutant_lines)
         self.assertIn("mask >>= 1;", mutant_lines)
+        self.assertIn("while (false) {", mutant_lines)
